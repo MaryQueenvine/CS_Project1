@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const roles = ['Student', 'Therapist', 'Admin'];
+const ADMIN_SECRET_CODE = '143200';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -17,18 +18,20 @@ const RegisterPage = () => {
     role: '',
     faculty: '',
     year: '',
-    licenseNumber: '',
     specialty: '',
-    experience: ''
+    experience: '',
+    adminCode: '',
+    licenseFile: null,
   });
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
+    const { name, value, files } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: files ? files[0] : value
     }));
   };
 
@@ -37,16 +40,30 @@ const RegisterPage = () => {
     setError('');
     setLoading(true);
 
-    // Simulate API request
     setTimeout(() => {
       setLoading(false);
 
-      if (!formData.name || !formData.email || !formData.password || !formData.role) {
+      const { name, email, password, role, faculty, year, specialty, experience, adminCode, licenseFile } = formData;
+
+      // Basic field check
+      if (!name || !email || !password || !role) {
         setError('Please fill in all required fields.');
         return;
       }
 
-      // In real case, send data to Django API here
+      // Therapist-specific file check
+      if (role === 'Therapist' && !licenseFile) {
+        setError('Please upload a copy of your license.');
+        return;
+      }
+
+      // Admin secret code check
+      if (role === 'Admin' && adminCode !== ADMIN_SECRET_CODE) {
+        setError('Invalid admin code. Access denied.');
+        return;
+      }
+
+      // In real case: send FormData to Django backend
       alert('Registered successfully!');
       navigate('/login');
     }, 1000);
@@ -109,7 +126,7 @@ const RegisterPage = () => {
             ))}
           </TextField>
 
-          {/* Conditional fields */}
+          {/* Student Fields */}
           {formData.role === 'Student' && (
             <>
               <TextField
@@ -133,17 +150,9 @@ const RegisterPage = () => {
             </>
           )}
 
+          {/* Therapist Fields */}
           {formData.role === 'Therapist' && (
             <>
-              <TextField
-                name="licenseNumber"
-                label="License Number"
-                fullWidth
-                margin="normal"
-                value={formData.licenseNumber}
-                onChange={handleChange}
-                required
-              />
               <TextField
                 name="specialty"
                 label="Specialty"
@@ -162,7 +171,32 @@ const RegisterPage = () => {
                 onChange={handleChange}
                 required
               />
+              <Box mt={2}>
+                <Typography variant="body2" gutterBottom>
+                  Upload License (PDF, PNG, JPG)
+                </Typography>
+                <input
+                  type="file"
+                  name="licenseFile"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  onChange={handleChange}
+                />
+              </Box>
             </>
+          )}
+
+          {/* Admin Code Field */}
+          {formData.role === 'Admin' && (
+            <TextField
+              name="adminCode"
+              label="Admin Access Code"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={formData.adminCode}
+              onChange={handleChange}
+              required
+            />
           )}
 
           <Box mt={3}>

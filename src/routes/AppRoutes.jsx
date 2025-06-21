@@ -7,7 +7,9 @@ import StudentDashboard from '../components/StudentDashboard';
 import TherapistDashboard from '../components/TherapistDashboard';
 import AdminDashboard from '../components/AdminDashboard';
 import TriageChatbotPage from '../pages/TriageChatbotPage';
-
+import MoodCheckInPage from '../pages/MoodCheckInPage';
+import MoodHistoryPage from '../pages/MoodHistoryPage';
+import StudentResourcesPage from '../pages/StudentResourcesPage';
 
 const AppRoutes = () => (
   <Routes>
@@ -17,8 +19,12 @@ const AppRoutes = () => (
     <Route path="/dashboard-student" element={<StudentDashboard />} />
     <Route path="/dashboard-therapist" element={<TherapistDashboard />} />
     <Route path="/dashboard-admin" element={<AdminDashboard />} />
-    <Route path="*" element={<h2>404 - Page Not Found</h2>} />
+    
     <Route path="/triage-chatbot" element={<TriageChatbotPage />} />
+    <Route path="/mood-checkin" element={<MoodCheckInPage />} />
+    <Route path="/mood-history" element={<MoodHistoryPage />} />
+    <Route path="/resources-student" element={<StudentResourcesPage />} />
+    <Route path="*" element={<h2>404 - Page Not Found</h2>} />
 
   </Routes>
 );
