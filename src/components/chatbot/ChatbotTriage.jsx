@@ -6,7 +6,7 @@ import {
   Button, Chip, Divider
 } from '@mui/material';
 
-const flaggedKeywords = ['self-harm', 'suicide', 'hopeless', 'kill myself', 'panic', 'worthless'];
+const flaggedKeywords = ['self-harm', 'suicide', 'hopeless', 'kill myself', 'panic', 'worthless', 'jump off', 'hang myself', 'km', 'cut myself'];
 
 const ChatbotTriage = () => {
   const [messages, setMessages] = useState([
@@ -27,7 +27,7 @@ const ChatbotTriage = () => {
       sender: 'bot',
       text: flagged
         ? "Thank you for sharing. I'm detecting something serious—please hold on as I notify a therapist."
-        : "Kys nigga, I ain't readin allat"
+        : "I understand where you are coming from. I am here to listen."
          
     };
 

@@ -51,7 +51,7 @@ const StudentDashboard = () => {
         <Typography variant="body2" mb={2}>
           Optional daily mood reflection to track emotional trends.
         </Typography>
-        <Button variant="outlined" color="secondary" fullWidth>Check In</Button>
+        <Button variant="outlined" color="secondary" fullWidth  onClick={() => navigate('/mood-checkin')}>Check In</Button>
       </Paper>
 
       {/* Upcoming Session */}
@@ -74,7 +74,7 @@ const StudentDashboard = () => {
         <Typography variant="body2" mb={2}>
           Access therapist-curated content to help you cope and grow.
         </Typography>
-        <Button variant="text" fullWidth>View Materials</Button>
+        <Button variant="text" fullWidth  onClick={() => navigate('/resources-student')}>View Materials</Button>
       </Paper>
 
       {/* Emergency Support */}
