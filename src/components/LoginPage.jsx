@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import '../pages/Lnadingpage.css';
 import {
-  Container, Typography, TextField, Button,
-  Box, Alert
+  Typography, TextField, Box, Alert
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { firebaseConfig } from '../firebaseConfig'; // Import Firebase auth
+import { useNavigate, Link } from 'react-router-dom';
+import { firebaseConfig } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -26,9 +24,7 @@ const LoginPage = () => {
       const userCredential = await signInWithEmailAndPassword(firebaseConfig, formData.email, formData.password);
       const user = userCredential.user;
 
-      // After successful login, you can fetch user data from your PostgreSQL database
-      // For example, you can call your Django API to get user role
-      const response = await fetch(`/api/get_user_role/${user.uid}`); // Adjust the endpoint as needed
+      const response = await fetch(`/api/get_user_role/${user.uid}`);
       const data = await response.json();
 
       if (data.role === 'Student') navigate('/dashboard-student');
@@ -40,50 +36,76 @@ const LoginPage = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3} borderRadius={2}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Login
-        </Typography>
+    <div className="gradient-bg" style={{ minHeight: '100vh', paddingTop: '100px' }}>
+      <header style={{ background: 'rgba(255,255,255,0.95)', padding: '1rem 0' }}>
+        <nav className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="logo">Student MindCare</div>
+          <div>
+            <Link to="/login" className="btn btn-secondary" style={{ marginRight: '1rem' }}>Login</Link>
+            <Link to="/register" className="btn btn-primary">Register</Link>
+          </div>
+        </nav>
+      </header>
 
-        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
-        <form onSubmit={handleSubmit}>
-          <TextField
-            name="email"
-            label="Email"
-            fullWidth
-            margin="normal"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-
-          <TextField
-            name="password"
-            label="Password"
-            type="password"
-            fullWidth
-            margin="normal"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-
-          <Box mt={3}>
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Login
-            </Button>
-          </Box>
-        </form>
-
-        <Box mt={2} textAlign="center">
-          <Typography variant="body2">
-            Don’t have an account? <a href="/register">Register</a>
+      <main className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box
+          sx={{
+            background: 'white',
+            padding: '2rem',
+            borderRadius: '15px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+            maxWidth: '500px',
+            width: '100%',
+            mt: 4
+          }}
+        >
+          <Typography variant="h4" align="center" gutterBottom style={{ color: '#764ba2' }}>
+            Login
           </Typography>
+
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+          <form onSubmit={handleSubmit}>
+            <TextField
+              name="email"
+              label="Email"
+              fullWidth
+              margin="normal"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+
+            <TextField
+              name="password"
+              label="Password"
+              type="password"
+              fullWidth
+              margin="normal"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+
+            <Box mt={3}>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ width: '100%' }}
+              >
+                Login
+              </button>
+            </Box>
+          </form>
+
+          <Box mt={2} textAlign="center">
+            <Typography variant="body2" color="textSecondary">
+              Don’t have an account? <Link to="/register" style={{ color: '#764ba2', textDecoration: 'underline' }}>Register</Link>
+            </Typography>
+          </Box>
         </Box>
-      </Box>
-    </Container>
+      </main>
+    </div>
   );
 };
 

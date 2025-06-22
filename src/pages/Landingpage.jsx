@@ -86,7 +86,7 @@ const App = () => {
               <h1>Your Mental Health Journey Starts <span className="highlight">Here</span></h1>
               <p>Connect with professional therapists, get 24/7 AI support, and access personalized resources designed specifically for university students.</p>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                <a href="#signup" className="btn btn-primary" style={{ background: 'white', color: '#764ba2', fontSize: '1.1rem' }}>Start Your Journey</a>
+                <Link to="/register" className="btn btn-primary" style={{ background: 'white', color: '#764ba2', fontSize: '1.1rem' }}>Start your Journey</Link>
                 <a href="#learn-more" className="btn btn-secondary" style={{ borderColor: 'white', color: 'white' }}>Learn More</a>
               </div>
             </div>
