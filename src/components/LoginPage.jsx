@@ -1,15 +1,16 @@
-// src/components/LoginPage.jsx
 import React, { useState } from 'react';
+import '../pages/Lnadingpage.css';
 import {
   Container, Typography, TextField, Button,
   Box, Alert
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../services/authService';
+import { firebaseConfig } from '../firebaseConfig'; // Import Firebase auth
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
 
 const LoginPage = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
 
@@ -17,20 +18,25 @@ const LoginPage = () => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    const user = login(formData.email, formData.password);
+    try {
+      const userCredential = await signInWithEmailAndPassword(firebaseConfig, formData.email, formData.password);
+      const user = userCredential.user;
 
-    if (!user) {
-      setError('Invalid credentials. Try student@example.com, therapist@example.com, or admin@example.com');
-      return;
+      // After successful login, you can fetch user data from your PostgreSQL database
+      // For example, you can call your Django API to get user role
+      const response = await fetch(`/api/get_user_role/${user.uid}`); // Adjust the endpoint as needed
+      const data = await response.json();
+
+      if (data.role === 'Student') navigate('/dashboard-student');
+      else if (data.role === 'Therapist') navigate('/dashboard-therapist');
+      else if (data.role === 'Admin') navigate('/dashboard-admin');
+    } catch (error) {
+      setError('Invalid credentials. Please try again.');
     }
-
-    if (user.role === 'Student') navigate('/dashboard-student');
-    else if (user.role === 'Therapist') navigate('/dashboard-therapist');
-    else if (user.role === 'Admin') navigate('/dashboard-admin');
   };
 
   return (
