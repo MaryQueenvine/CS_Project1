@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
+import '../pages/Lnadingpage.css';
 import {
   Container, Typography, TextField, Button,
   Box, MenuItem, Alert, CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { firebaseConfig } from '../firebaseConfig'; // Import Firebase auth
+import { createUserWithEmailAndPassword } from 'firebase/auth'; // Corrected import
+
+
 
 const roles = ['Student', 'Therapist', 'Admin'];
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -32,25 +36,47 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Simulate API request
-    setTimeout(() => {
-      setLoading(false);
+    try {
+        const userCredential = await createUserWithEmailAndPassword(firebaseConfig, formData.email, formData.password);
+        const user = userCredential.user;
 
-      if (!formData.name || !formData.email || !formData.password || !formData.role) {
-        setError('Please fill in all required fields.');
-        return;
-      }
+        // After successful registration, you can send user data to your PostgreSQL database
+        const response = await fetch('/api/register_user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                uid: user.uid,
+                name: formData.name,
+                email: formData.email,
+                role: formData.role,
+                faculty: formData.faculty,
+                year: formData.year,
+                licenseNumber: formData.licenseNumber,
+                specialty: formData.specialty,
+                experience: formData.experience
+            }),
+        });
 
-      // In real case, send data to Django API here
-      alert('Registered successfully!');
-      navigate('/login');
-    }, 1000);
-  };
+        if (!response.ok) {
+            throw new Error('Failed to register user in the database');
+        }
+
+        alert('Registered successfully!');
+        navigate('/login');
+    } catch (error) {
+        setError(error.message);
+    } finally {
+        setLoading(false);
+    }
+};
+
 
   return (
     <Container maxWidth="sm">
