@@ -106,6 +106,40 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
+
+
+# Logging Configuration
+LOGGING_CONFIG = None  # Disable Django auto logging config
+
+import logging.config
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
+
+logging.config.dictConfig(LOGGING)
+
+CSRF_FAILURE_VIEW = 'users.showing.csrf.csrf_failure'
+DEFAULT_EXCEPTION_REPORTER = "django.views.debug.ExceptionReporter"
+DEFAULT_EXCEPTION_REPORTER_FILTER = "django.views.debug.SafeExceptionReporterFilter"
+
+
+
 
 
 # Internationalization
