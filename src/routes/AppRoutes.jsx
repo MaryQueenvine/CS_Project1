@@ -10,6 +10,8 @@ import TriageChatbotPage from '../pages/TriageChatbotPage';
 import MoodCheckInPage from '../pages/MoodCheckInPage';
 import MoodHistoryPage from '../pages/MoodHistoryPage';
 import StudentResourcesPage from '../pages/StudentResourcesPage';
+import SessionRequestPage from '../pages/SessionRequestPage';
+import SessionRequestListPage from '../pages/SessionRequestListPage';
 
 const AppRoutes = () => (
   <Routes>
@@ -23,7 +25,9 @@ const AppRoutes = () => (
     <Route path="/triage-chatbot" element={<TriageChatbotPage />} />
     <Route path="/mood-checkin" element={<MoodCheckInPage />} />
     <Route path="/mood-history" element={<MoodHistoryPage />} />
-    <Route path="/resources-student" element={<StudentResourcesPage />} />
+    <Route path="/student-resources" element={<StudentResourcesPage />} />
+    <Route path="/request-session" element={<SessionRequestPage />} />
+    <Route path="/session-requests" element={<SessionRequestListPage />} />
     <Route path="*" element={<h2>404 - Page Not Found</h2>} />
 
   </Routes>
