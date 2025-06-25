@@ -2,9 +2,21 @@
 
 export const login = (email, password) => {
   const mockUsers = {
-    'student@example.com': { role: 'Student', token: 'student-token' },
-    'therapist@example.com': { role: 'Therapist', token: 'therapist-token' },
-    'admin@example.com': { role: 'Admin', token: 'admin-token' }
+    'student@example.com': {
+      role: 'Student',
+      token: 'student-token',
+      email: 'student@example.com' // ✅ added for tracking session ownership
+    },
+    'therapist@example.com': {
+      role: 'Therapist',
+      token: 'therapist-token',
+      email: 'therapist@example.com' // ✅ included to support therapist logic later
+    },
+    'admin@example.com': {
+      role: 'Admin',
+      token: 'admin-token',
+      email: 'admin@example.com' // ✅ same here
+    }
   };
 
   const user = mockUsers[email];

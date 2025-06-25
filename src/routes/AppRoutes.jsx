@@ -12,6 +12,12 @@ import MoodHistoryPage from '../pages/MoodHistoryPage';
 import StudentResourcesPage from '../pages/StudentResourcesPage';
 import SessionRequestPage from '../pages/SessionRequestPage';
 import SessionRequestListPage from '../pages/SessionRequestListPage';
+import TriageSummaryListPage from '../pages/TriageSummaryListPage';
+import TherapistAssignmentPage from '../pages/TherapistAssignmentPage';
+import ConfirmedSessionsPage from '../pages/ConfirmedSessionsPage';
+import StudentNotificationsPage from '../pages/StudentNotificationsPage';
+import PreSessionChatPage from '../pages/PreSessionChatPage';
+import StudentProfilePage from '../pages/StudentProfilePage';
 
 const AppRoutes = () => (
   <Routes>
@@ -28,6 +34,12 @@ const AppRoutes = () => (
     <Route path="/student-resources" element={<StudentResourcesPage />} />
     <Route path="/request-session" element={<SessionRequestPage />} />
     <Route path="/session-requests" element={<SessionRequestListPage />} />
+    <Route path="/triage-summaries" element={<TriageSummaryListPage />} />
+    <Route path="/assigned-therapist" element={<TherapistAssignmentPage />} />
+    <Route path="/confirmed-sessions" element={<ConfirmedSessionsPage />} />
+    <Route path="/notifications" element={<StudentNotificationsPage />} />
+    <Route path="/chat-therapist" element={<PreSessionChatPage />} />
+    <Route path="/student-profile" element={<StudentProfilePage />} />
     <Route path="*" element={<h2>404 - Page Not Found</h2>} />
 
   </Routes>

@@ -19,7 +19,11 @@ const SessionRequestListPage = () => {
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem('user'));
     const allRequests = JSON.parse(localStorage.getItem('sessionRequests')) || [];
-    const filtered = allRequests.filter(req => req.studentId === currentUser?.email);
+
+    const filtered = currentUser?.email
+      ? allRequests.filter(req => req.studentId === currentUser.email)
+      : [];
+
     setMyRequests(filtered);
   }, []);
 
