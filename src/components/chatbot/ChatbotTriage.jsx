@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-
 import {
   Box, Typography, Paper, TextField,
   Button, Chip, Divider
 } from '@mui/material';
 
-const flaggedKeywords = ['self-harm', 'suicide', 'hopeless', 'kill myself', 'panic', 'worthless', 'jump off', 'hang myself', 'km', 'cut myself'];
+const flaggedKeywords = [
+  'self-harm', 'suicide', 'hopeless', 'kill myself',
+  'panic', 'worthless', 'jump off', 'hang myself',
+  'km', 'cut myself'
+];
 
 const ChatbotTriage = () => {
   const [messages, setMessages] = useState([
@@ -18,6 +20,7 @@ const ChatbotTriage = () => {
 
   const handleSend = () => {
     if (!input.trim()) return;
+
     const studentMsg = { sender: 'student', text: input };
     const flagged = flaggedKeywords.some(kw =>
       input.toLowerCase().includes(kw)
@@ -28,7 +31,6 @@ const ChatbotTriage = () => {
       text: flagged
         ? "Thank you for sharing. I'm detecting something serious—please hold on as I notify a therapist."
         : "I understand where you are coming from. I am here to listen."
-         
     };
 
     setMessages(prev => [...prev, studentMsg, botResponse]);
@@ -38,8 +40,20 @@ const ChatbotTriage = () => {
 
   const handleSubmit = () => {
     setFinished(true);
+
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const newSummary = {
+      studentId: currentUser?.email || 'anonymous@student.com',
+      messages: messages,
+      flagged: isFlagged,
+      submittedAt: new Date().toISOString()
+    };
+
+    const existingSummaries = JSON.parse(localStorage.getItem('triageSummaries')) || [];
+    existingSummaries.push(newSummary);
+    localStorage.setItem('triageSummaries', JSON.stringify(existingSummaries));
+
     alert('Triage complete. Your responses have been flagged for therapist review.');
-    // In real case: send summary to backend API here
   };
 
   return (

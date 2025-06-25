@@ -59,6 +59,18 @@ const StudentDashboard = () => {
         <Button variant="contained" color="primary" fullWidth onClick={() => navigate('/triage-chatbot')}>
           Start Triage
         </Button>
+        <Button
+         variant="text"
+          fullWidth
+          onClick={() => navigate('/triage-summaries')}
+          >
+          View Past Triage Summaries
+          </Button>
+
+          
+
+
+
       </Paper>
 
       {/* Mood Check-In */}
@@ -87,6 +99,21 @@ const StudentDashboard = () => {
         <Button variant="outlined" color="info" fullWidth onClick={() => navigate('/request-session')}>
           Request Session
         </Button>
+            <Button
+              variant="text"
+            fullWidth
+            onClick={() => navigate('/assigned-therapist')}
+            >
+            View Assigned Therapist
+            </Button>
+            <Button
+             variant="text"
+             fullWidth
+              onClick={() => navigate('/confirmed-sessions')} 
+             >
+              View Confirmed Sessions
+            </Button>
+
       </Paper>
 
       {/* Resources */}
@@ -101,6 +128,45 @@ const StudentDashboard = () => {
         <Button variant="text" fullWidth onClick={() => navigate('/student-resources')}>
           View Materials
         </Button>
+      </Paper>
+
+        {/* Notifications */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Box display="flex" alignItems="center" mb={1}>
+          <ArticleIcon color="info" sx={{ mr: 1 }} />
+          <Typography variant="h6">Notifications</Typography>
+        </Box>
+        <Typography variant="body2" mb={2}>
+          Access your notifications for important updates and messages.
+        </Typography>
+        <Button
+          variant="outlined"
+          color="info"
+          fullWidth
+          onClick={() => navigate('/notifications')}
+          >
+         View Notifications
+        </Button>
+      </Paper>
+
+              {/* Pre-session chat with therapist */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Box display="flex" alignItems="center" mb={1}>
+          <ArticleIcon color="info" sx={{ mr: 1 }} />
+          <Typography variant="h6">Chat with therapist</Typography>
+        </Box>
+        <Typography variant="body2" mb={2}>
+          Chat with your therapist before your session to discuss any concerns or topics.
+        </Typography>
+          <Button
+           variant="outlined"
+           color="primary"
+          fullWidth
+           onClick={() => navigate('/chat-therapist')}
+           >
+           Message My Therapist
+            </Button>
+
       </Paper>
 
       {/* Emergency Support */}
