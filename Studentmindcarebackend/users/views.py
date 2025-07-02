@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import CustomUser   # Import the CustomUser  model
-from .serializers import UserSerializer
+from .serializer import UserSerializer
 
 def home_view(request):
     return HttpResponse("<h1>Welcome to StudentMindCare Backend</h1>")
