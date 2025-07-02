@@ -1,80 +1,57 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.hashers import make_password, check_password
-
-class Profile(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    mood_status = models.CharField(max_length=50)
-    password = models.CharField(max_length=128)  # For hashed password storage
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
-
-    def __str__(self):
-        return self.name
-
-
-class Student(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    is_in_crisis = models.BooleanField(default=False)
-    password = models.CharField(max_length=128)  # For hashed password storage
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
-
-    def __str__(self):
-        return self.name
-
-
-class Therapist(models.Model):
-    name = models.CharField(max_length=100)
-    specialization = models.CharField(max_length=100)
-    password = models.CharField(max_length=128)  # For hashed password storage
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        
-    def check_password(self, raw_password):
-        return check_password(raw_password, self.password)
-
-    def __str__(self):
-        return self.name
-
-
-class Session(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE)
-    scheduled_time = models.DateTimeField()
-    notes = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.student.name} with {self.therapist.name}"
 
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
-        ('Student', 'Student'),
-        ('Therapist', 'Therapist'),
-        ('Admin', 'Admin'),
+        ('student', 'Student'),
+        ('therapist', 'Therapist'),
+        ('admin', 'Admin'),
     ]
-    uid = models.CharField(max_length=255, unique=True)
+
+    # Firebase UID for authentication
+    uid = models.CharField(max_length=255, unique=True, db_index=True)
+
+    # Role-based fields
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    # Student-specific fields
     faculty = models.CharField(max_length=100, blank=True, null=True)
     year = models.CharField(max_length=10, blank=True, null=True)
+
+    # Therapist-specific fields
     licenseNumber = models.CharField(max_length=100, blank=True, null=True)
     specialty = models.CharField(max_length=100, blank=True, null=True)
     experience = models.CharField(max_length=10, blank=True, null=True)
 
+    # Additional fields
+    is_in_crisis = models.BooleanField(default=False)
+    mood_status = models.CharField(max_length=50, blank=True, null=True)
+
     def __str__(self):
-        return self.username
+        return f"{self.username} ({self.role})"
+
+    class Meta:
+        db_table = 'custom_user'
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'
 
 
+# Keep existing models if they're being used elsewhere
+class Session(models.Model):
+    student = models.ForeignKey(
+        CustomUser,on_delete=models.CASCADE, related_name='student_sessions'
+    )
+    therapist = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='therapist_sessions'
+    )
+    scheduled_time = models.DateTimeField()
+    notes = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.student.username} with {self.therapist.username}"
+
+    class Meta:
+        db_table = 'session'
