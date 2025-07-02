@@ -61,13 +61,20 @@ class Session(models.Model):
 
 class CustomUser(AbstractUser):
     ROLE_CHOICES = [
-        ('student', 'Student'),
-        ('therapist', 'Therapist'),
-        ('admin', 'Admin'),
+        ('Student', 'Student'),
+        ('Therapist', 'Therapist'),
+        ('Admin', 'Admin'),
     ]
+    uid = models.CharField(max_length=255, unique=True)
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    faculty = models.CharField(max_length=100, blank=True, null=True)
+    year = models.CharField(max_length=10, blank=True, null=True)
+    licenseNumber = models.CharField(max_length=100, blank=True, null=True)
+    specialty = models.CharField(max_length=100, blank=True, null=True)
+    experience = models.CharField(max_length=10, blank=True, null=True)
 
     def __str__(self):
         return self.username
+
 
 
