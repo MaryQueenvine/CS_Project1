@@ -7,13 +7,31 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 
+const urgencyColor = {
+  High: 'error',
+  Medium: 'warning',
+  Low: 'success'
+};
+
+const urgencyPriority = {
+  High: 1,
+  Medium: 2,
+  Low: 3
+};
+
 const TherapistSessionRequestsPage = () => {
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
-    const allRequests = JSON.parse(localStorage.getItem('sessionRequests')) || [];
-    setRequests(allRequests.reverse()); // Show latest first
+    const all = JSON.parse(localStorage.getItem('sessionRequests')) || [];
+
+    // Sort by urgency priority (High → Low)
+    const sorted = [...all].sort((a, b) =>
+      urgencyPriority[a.urgency] - urgencyPriority[b.urgency]
+    );
+
+    setRequests(sorted);
   }, []);
 
   return (
@@ -28,32 +46,29 @@ const TherapistSessionRequestsPage = () => {
       </Button>
 
       <Typography variant="h4" gutterBottom>
-        All Session Requests
+        Incoming Session Requests
       </Typography>
 
       {requests.length === 0 ? (
         <Typography variant="body1" color="text.secondary">
-          No session requests submitted yet.
+          No session requests received yet.
         </Typography>
       ) : (
         requests.map((req, idx) => (
           <Paper key={idx} sx={{ p: 3, mb: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography variant="h6">{req.topic}</Typography>
-              <Chip label={req.urgency} color={
-                req.urgency === 'High' ? 'error' :
-                req.urgency === 'Medium' ? 'warning' : 'success'
-              } size="small" />
+              <Chip label={req.urgency} color={urgencyColor[req.urgency]} />
             </Box>
             <Typography variant="body2" color="text.secondary" mb={1}>
               Student: {req.studentId}
             </Typography>
-            <Typography variant="body2" mb={1}>
+            <Typography variant="body2" color="text.secondary" mb={1}>
               Preferred Time: {new Date(req.preferredTime).toLocaleString()}
             </Typography>
             <Divider sx={{ my: 1 }} />
             <Typography variant="caption" color="text.secondary">
-              Submitted on: {new Date(req.submittedAt).toLocaleString()}
+              Submitted: {new Date(req.submittedAt).toLocaleString()}
             </Typography>
           </Paper>
         ))
