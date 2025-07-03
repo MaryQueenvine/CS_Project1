@@ -37,6 +37,16 @@ const TherapistDashboard = () => {
             View All Triage Reviews
           </Button>
 
+
+            <Button
+              variant="outlined"
+              color="info"
+              onClick={() => navigate('/therapist-session-requests')}
+            >
+              View Session Requests
+            </Button>
+
+
           <Button
             variant="outlined"
             color="error"

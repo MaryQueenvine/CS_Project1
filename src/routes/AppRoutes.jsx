@@ -25,6 +25,7 @@ import TriageSummaryReviewPage from '../pages/TriageSummaryReviewPage';
 import AssignedStudentsPage from '../pages/AssignedStudentsPage';
 import ViewStudentMoodLogsPage from '../pages/ViewStudentMoodLogsPage'; // ✅ Route target
 import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage'; 
+import TherapistSessionRequestsPage from '../pages/TherapistSessionRequestsPage';
 
 
 const AppRoutes = () => (
@@ -60,6 +61,10 @@ const AppRoutes = () => (
 
     {/* Global Mood Logs */}
     <Route path="/global-flagged-mood-logs" element={<GlobalFlaggedMoodLogsPage />} />
+
+    {/* Therapist Session Requests */}
+    <Route path="/therapist-session-requests" element={<TherapistSessionRequestsPage />} />
+
 
     {/* 404 fallback */}
     <Route path="*" element={<h2>404 - Page Not Found</h2>} />
