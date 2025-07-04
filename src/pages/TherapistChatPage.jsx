@@ -1,4 +1,3 @@
-// src/pages/TherapistChatPage.jsx
 import React, { useEffect, useState } from 'react';
 import {
   Container, Box, Typography, Paper, TextField,
@@ -6,6 +5,7 @@ import {
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
+import ChatBubble from '../components/ChatBubble';
 
 const TherapistChatPage = () => {
   const navigate = useNavigate();
@@ -15,32 +15,40 @@ const TherapistChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
 
+  const threadId = `${selectedStudent}|${therapist?.email}`;
+
   useEffect(() => {
-    const studentAssignments = JSON.parse(localStorage.getItem('studentAssignments')) || [];
-    const assigned = studentAssignments.filter(entry => entry.therapistEmail === therapist?.email);
-    setAssignedStudents(assigned);
+    const assignments = JSON.parse(localStorage.getItem('studentAssignments')) || [];
+    console.log('🧠 Loaded assignments from localStorage:', assignments);
+
+    const myStudents = assignments.filter(entry => entry.therapistEmail === therapist?.email);
+    console.log('✅ Matched assigned students for therapist:', myStudents);
+
+    setAssignedStudents(myStudents);
   }, [therapist?.email]);
 
-  useEffect(() => {
-    if (!selectedStudent) return;
-
-    const threadId = `${selectedStudent}|${therapist.email}`;
-    const allThreads = JSON.parse(localStorage.getItem('messages')) || [];
-    const thread = allThreads.find(t => t.threadId === threadId);
-
+  const loadMessages = () => {
+    const threads = JSON.parse(localStorage.getItem('messages')) || [];
+    const thread = threads.find(t => t.threadId === threadId);
     setMessages(thread?.messages || []);
-  }, [selectedStudent, therapist.email]);
+  };
+
+  useEffect(() => {
+    if (selectedStudent) {
+      loadMessages();
+      const interval = setInterval(loadMessages, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [selectedStudent]);
 
   const handleSend = () => {
     if (!input.trim()) return;
-
     const newMsg = {
       from: 'therapist',
       text: input,
       time: new Date().toISOString()
     };
 
-    const threadId = `${selectedStudent}|${therapist.email}`;
     const allThreads = JSON.parse(localStorage.getItem('messages')) || [];
     let thread = allThreads.find(t => t.threadId === threadId);
 
@@ -52,8 +60,8 @@ const TherapistChatPage = () => {
     }
 
     localStorage.setItem('messages', JSON.stringify(allThreads));
-    setMessages([...thread.messages]);
     setInput('');
+    loadMessages();
   };
 
   return (
@@ -70,6 +78,20 @@ const TherapistChatPage = () => {
       <Typography variant="h5" gutterBottom>
         Therapist-Student Messaging
       </Typography>
+
+      {/* 🔎 Debug Info */}
+      <Box sx={{ bgcolor: '#f5f5f5', p: 2, borderRadius: 2, mb: 3 }}>
+        <Typography variant="subtitle2">🧑 Logged-in Therapist:</Typography>
+        <Typography variant="body2">{therapist?.email || 'Not logged in'}</Typography>
+        <Typography variant="subtitle2" sx={{ mt: 1 }}>🎓 Assigned Students:</Typography>
+        {assignedStudents.length > 0 ? (
+          assignedStudents.map((s, i) => (
+            <Typography key={i} variant="body2">• {s.studentEmail}</Typography>
+          ))
+        ) : (
+          <Typography color="error" variant="body2">❗ No students assigned.</Typography>
+        )}
+      </Box>
 
       {/* Student Selector */}
       <FormControl fullWidth sx={{ mt: 2, mb: 3 }}>
@@ -89,37 +111,18 @@ const TherapistChatPage = () => {
 
       {selectedStudent && (
         <>
-          {/* Messages */}
           <Paper sx={{ p: 2, mb: 2, minHeight: 200 }}>
             {messages.length === 0 ? (
               <Typography color="text.secondary">No messages yet.</Typography>
             ) : (
               messages.map((msg, idx) => (
-                <Box
-                  key={idx}
-                  alignSelf={msg.from === 'therapist' ? 'flex-end' : 'flex-start'}
-                  sx={{
-                    mb: 1,
-                    p: 1.5,
-                    borderRadius: 2,
-                    bgcolor: msg.from === 'therapist' ? '#e8f5e9' : '#e3f2fd',
-                    maxWidth: '80%'
-                  }}
-                >
-                  <Typography variant="body2">
-                    <strong>{msg.from}:</strong> {msg.text}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(msg.time).toLocaleTimeString()}
-                  </Typography>
-                </Box>
+                <ChatBubble key={idx} {...msg} />
               ))
             )}
           </Paper>
 
           <Divider sx={{ mb: 2 }} />
 
-          {/* Input */}
           <TextField
             fullWidth
             placeholder="Type your message..."

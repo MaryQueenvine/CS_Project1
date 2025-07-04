@@ -13,20 +13,43 @@ const urgencyColor = {
   Low: 'success'
 };
 
+const statusColor = {
+  pending: 'warning',
+  approved: 'success',
+  rejected: 'default'
+};
+
 const TherapistSessionRequestsPage = () => {
   const navigate = useNavigate();
+  const therapist = JSON.parse(localStorage.getItem('user'));
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
     const all = JSON.parse(localStorage.getItem('sessionRequests')) || [];
-    setRequests(all);
-  }, []);
 
-  const handleApprove = (idx) => {
-    const updated = [...requests];
-    updated[idx].approved = true;
-    setRequests(updated);
+    // Filter only requests assigned to current therapist
+    const myRequests = all.filter(
+      req => req.therapistEmail === therapist?.email
+    );
+
+    setRequests(myRequests);
+  }, [therapist?.email]);
+
+  const updateStatus = (id, newStatus) => {
+    const all = JSON.parse(localStorage.getItem('sessionRequests')) || [];
+
+    const updated = all.map(req => {
+      if (req.id === id) {
+        return { ...req, status: newStatus };
+      }
+      return req;
+    });
+
     localStorage.setItem('sessionRequests', JSON.stringify(updated));
+
+    // Refresh filtered list
+    const myRequests = updated.filter(req => req.therapistEmail === therapist?.email);
+    setRequests(myRequests);
   };
 
   return (
@@ -41,18 +64,19 @@ const TherapistSessionRequestsPage = () => {
       </Button>
 
       <Typography variant="h4" gutterBottom>
-        All Session Requests
+        Session Requests Assigned to You
       </Typography>
 
       {requests.length === 0 ? (
         <Typography>No session requests submitted yet.</Typography>
       ) : (
-        requests.map((req, idx) => (
-          <Paper key={idx} sx={{ p: 3, mb: 3 }}>
+        requests.map((req) => (
+          <Paper key={req.id} sx={{ p: 3, mb: 3 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography variant="h6">{req.topic}</Typography>
               <Chip label={req.urgency} color={urgencyColor[req.urgency]} />
             </Box>
+
             <Typography variant="body2" mb={1}>
               Student: {req.studentId}
             </Typography>
@@ -65,18 +89,35 @@ const TherapistSessionRequestsPage = () => {
 
             <Divider sx={{ my: 2 }} />
 
-            {req.approved ? (
-              <Chip label="✅ Approved" color="success" />
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={() => handleApprove(idx)}
-              >
-                Mark as Approved
-              </Button>
-            )}
+            {/* Request status and actions */}
+            <Box display="flex" alignItems="center" gap={2}>
+              <Chip
+                label={`Status: ${req.status || 'pending'}`}
+                color={statusColor[req.status || 'pending']}
+              />
+
+              {req.status !== 'approved' && (
+                <Button
+                  variant="contained"
+                  color="success"
+                  size="small"
+                  onClick={() => updateStatus(req.id, 'approved')}
+                >
+                  Approve
+                </Button>
+              )}
+
+              {req.status !== 'rejected' && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="small"
+                  onClick={() => updateStatus(req.id, 'rejected')}
+                >
+                  Reject
+                </Button>
+              )}
+            </Box>
           </Paper>
         ))
       )}
