@@ -30,6 +30,7 @@ const Navbar = () => {
   const goToProfile = () => {
     handleMenuClose();
     if (currentUser?.role === 'Student') navigate('/student-profile');
+    if (currentUser?.role === 'Therapist') navigate('/therapist-profile');
   };
 
   return (
@@ -80,22 +81,38 @@ const Navbar = () => {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
+              {/* Common Profile Button */}
               <MenuItem onClick={goToProfile}>👤 Profile</MenuItem>
               <Divider />
 
-              <MenuItem onClick={() => { navigate('/assigned-therapist'); handleMenuClose(); }}>
-                🧑‍⚕️ View Assigned Therapist
-              </MenuItem>
-              <MenuItem onClick={() => { navigate('/confirmed-sessions'); handleMenuClose(); }}>
-                📅 Confirmed Sessions
-              </MenuItem>
-              <MenuItem onClick={() => { navigate('/notifications'); handleMenuClose(); }}>
-                🔔 Notifications
-              </MenuItem>
-              <MenuItem onClick={() => { navigate('/chat-therapist'); handleMenuClose(); }}>
-                💬 Message My Therapist
-              </MenuItem>
-              <Divider />
+              {/* Role-Based Items */}
+              {currentUser.role === 'Student' && (
+                <>
+                  <MenuItem onClick={() => { navigate('/assigned-therapist'); handleMenuClose(); }}>
+                    🧑‍⚕️ View Assigned Therapist
+                  </MenuItem>
+                  <MenuItem onClick={() => { navigate('/confirmed-sessions'); handleMenuClose(); }}>
+                    📅 Confirmed Sessions
+                  </MenuItem>
+                  <MenuItem onClick={() => { navigate('/notifications'); handleMenuClose(); }}>
+                    🔔 Notifications
+                  </MenuItem>
+                  <MenuItem onClick={() => { navigate('/chat-therapist'); handleMenuClose(); }}>
+                    💬 Message My Therapist
+                  </MenuItem>
+                  <Divider />
+                </>
+              )}
+
+              {/* Therapist-specific: no student tools */}
+              {currentUser.role === 'Therapist' && (
+                <>
+                  <MenuItem onClick={() => { navigate('/therapist-profile'); handleMenuClose(); }}>
+                    ⚙️ Account Settings
+                  </MenuItem>
+                  <Divider />
+                </>
+              )}
 
               <MenuItem onClick={handleLogout}>🚪 Logout</MenuItem>
             </Menu>
