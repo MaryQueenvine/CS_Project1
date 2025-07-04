@@ -1,8 +1,11 @@
+// src/pages/AssignedStudentsPage.jsx
 import React from 'react';
 import {
-  Container, Typography, Grid, Paper, Box, Button
+  Container, Typography, Grid, Card, CardContent, CardActions,
+  Button, Box, Avatar
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SchoolIcon from '@mui/icons-material/School';
 import { useNavigate } from 'react-router-dom';
 
 const mockStudents = [
@@ -30,11 +33,11 @@ const AssignedStudentsPage = () => {
   const navigate = useNavigate();
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container sx={{ mt: 4 }}>
       <Button
         startIcon={<ArrowBackIcon />}
-        variant="outlined"
         onClick={() => navigate('/dashboard-therapist')}
+        variant="outlined"
         sx={{ mb: 3 }}
       >
         Back to Dashboard
@@ -47,25 +50,30 @@ const AssignedStudentsPage = () => {
       <Grid container spacing={3}>
         {mockStudents.map((student, idx) => (
           <Grid item xs={12} sm={6} md={4} key={idx}>
-            <Paper elevation={3} sx={{ p: 2 }}>
-              <Typography variant="h6">{student.name}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                {student.email}
-              </Typography>
-              <Box mt={1}>
+            <Card elevation={3}>
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2} mb={2}>
+                  <Avatar color="primary">
+                    <SchoolIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h6">{student.name}</Typography>
+                    <Typography variant="body2" color="text.secondary">{student.email}</Typography>
+                  </Box>
+                </Box>
                 <Typography variant="body2">Faculty: {student.faculty}</Typography>
                 <Typography variant="body2">Year: {student.year}</Typography>
-              </Box>
-              <Box mt={2} display="flex" flexDirection="column" gap={1}>
+              </CardContent>
+              <CardActions>
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   fullWidth
                   onClick={() => navigate(`/student-mood-logs/${encodeURIComponent(student.email)}`)}
                 >
                   View Mood Logs
                 </Button>
-              </Box>
-            </Paper>
+              </CardActions>
+            </Card>
           </Grid>
         ))}
       </Grid>

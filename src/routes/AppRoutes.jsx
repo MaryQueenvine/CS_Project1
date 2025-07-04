@@ -28,6 +28,8 @@ import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage';
 import TherapistSessionRequestsPage from '../pages/TherapistSessionRequestsPage';
 import TherapistChatPage from '../pages/TherapistChatPage';
 import TherapistProfilePage from '../pages/TherapistProfilePage';
+import AssignTherapistPage from '../pages/AssignTherapistPage';
+import EmergencyAlertReviewPage from '../pages/EmergencyAlertReviewPage';
 
 
 const AppRoutes = () => (
@@ -70,6 +72,10 @@ const AppRoutes = () => (
     <Route path="/chat-student" element={<TherapistChatPage />} />
 
     <Route path="/therapist-profile" element={<TherapistProfilePage />} />
+
+    <Route path="/assign-therapist" element={<AssignTherapistPage />} />
+
+    <Route path="/emergency-alerts" element={<EmergencyAlertReviewPage />} />
 
 
     {/* 404 fallback */}
