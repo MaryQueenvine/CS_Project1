@@ -1,110 +1,109 @@
 // src/pages/TherapistProfilePage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Container, Typography, TextField, Button,
-  Paper, Box, Divider
+  Container, Typography, Card, CardContent, TextField,
+  Button, Box, Grid, Avatar
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import BadgeIcon from '@mui/icons-material/Badge';
+import EmailIcon from '@mui/icons-material/Email';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { useNavigate } from 'react-router-dom';
 
 const TherapistProfilePage = () => {
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('user'));
-
-  const [bio, setBio] = useState('');
-  const [licenseFile, setLicenseFile] = useState(null);
-  const [savedLicenseName, setSavedLicenseName] = useState('');
+  const [therapist, setTherapist] = useState({ email: '', name: '', licenseFile: '' });
 
   useEffect(() => {
-    const profileData = JSON.parse(localStorage.getItem(`therapistProfile-${user.email}`));
-    if (profileData) {
-      setBio(profileData.bio || '');
-      setSavedLicenseName(profileData.licenseFileName || '');
-    }
-  }, [user.email]);
+    const user = JSON.parse(localStorage.getItem('user'));
+    const storedProfiles = JSON.parse(localStorage.getItem('therapistProfiles')) || {};
+    const profile = storedProfiles[user?.email] || { email: user?.email, name: '', licenseFile: '' };
+    setTherapist(profile);
+  }, []);
+
+  const handleChange = (e) => {
+    setTherapist({ ...therapist, [e.target.name]: e.target.value });
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLicenseFile(file);
+      setTherapist({ ...therapist, licenseFile: file.name });
     }
   };
 
   const handleSave = () => {
-    const profileData = {
-      bio,
-      licenseFileName: licenseFile ? licenseFile.name : savedLicenseName
-    };
-
-    localStorage.setItem(`therapistProfile-${user.email}`, JSON.stringify(profileData));
-
-    if (licenseFile) {
-      setSavedLicenseName(licenseFile.name);
-      setLicenseFile(null); // Clear after save
-    }
-
-    alert('Profile saved successfully!');
+    const storedProfiles = JSON.parse(localStorage.getItem('therapistProfiles')) || {};
+    storedProfiles[therapist.email] = therapist;
+    localStorage.setItem('therapistProfiles', JSON.stringify(storedProfiles));
+    alert('Profile updated!');
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        variant="outlined"
-        onClick={() => navigate('/dashboard-therapist')}
-        sx={{ mb: 3 }}
-      >
-        Back to Dashboard
-      </Button>
+    <Container maxWidth="sm" sx={{ mt: 5 }}>
+      <Card elevation={4}>
+        <CardContent>
+          <Box display="flex" alignItems="center" mb={3}>
+            <Avatar sx={{ bgcolor: 'primary.main', mr: 2 }}>
+              <BadgeIcon />
+            </Avatar>
+            <Box>
+              <Typography variant="h5">Therapist Profile</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Update your personal details and license file
+              </Typography>
+            </Box>
+          </Box>
 
-      <Typography variant="h4" gutterBottom>
-        Therapist Profile Settings
-      </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Full Name"
+                name="name"
+                value={therapist.name}
+                onChange={handleChange}
+              />
+            </Grid>
 
-      <Paper sx={{ p: 3 }}>
-        <Typography variant="h6" gutterBottom>Email</Typography>
-        <Typography variant="body1" sx={{ mb: 2 }}>{user.email}</Typography>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Email Address"
+                value={therapist.email}
+                disabled
+                InputProps={{ startAdornment: <EmailIcon sx={{ mr: 1 }} /> }}
+              />
+            </Grid>
 
-        <Divider sx={{ my: 2 }} />
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                component="label"
+                startIcon={<UploadFileIcon />}
+                fullWidth
+              >
+                Upload License File
+                <input type="file" hidden onChange={handleFileUpload} />
+              </Button>
+              {therapist.licenseFile && (
+                <Typography variant="body2" mt={1} color="text.secondary">
+                  Current: {therapist.licenseFile}
+                </Typography>
+              )}
+            </Grid>
 
-        <TextField
-          fullWidth
-          label="Bio / Description"
-          multiline
-          rows={4}
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          sx={{ mb: 3 }}
-        />
-
-        <Box sx={{ mb: 2 }}>
-          <Button
-            variant="outlined"
-            component="label"
-            startIcon={<UploadFileIcon />}
-          >
-            Upload License
-            <input type="file" hidden onChange={handleFileUpload} />
-          </Button>
-
-          {licenseFile && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              Selected: {licenseFile.name}
-            </Typography>
-          )}
-
-          {!licenseFile && savedLicenseName && (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              Current: {savedLicenseName}
-            </Typography>
-          )}
-        </Box>
-
-        <Button variant="contained" onClick={handleSave} fullWidth>
-          Save Profile
-        </Button>
-      </Paper>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                fullWidth
+                color="primary"
+                sx={{ textTransform: 'none', fontWeight: 'bold' }}
+                onClick={handleSave}
+              >
+                Save Changes
+              </Button>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     </Container>
   );
 };
