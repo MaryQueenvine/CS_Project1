@@ -46,6 +46,15 @@ const TherapistDashboard = () => {
               View Session Requests
             </Button>
 
+            <Button
+               variant="outlined"
+               color="primary"
+               onClick={() => navigate('/chat-student')}
+            >
+              Chat with Students
+            </Button>
+
+
 
           <Button
             variant="outlined"
