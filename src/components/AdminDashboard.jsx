@@ -9,6 +9,8 @@ import EventIcon from '@mui/icons-material/Event';
 import WarningIcon from '@mui/icons-material/Warning';
 import FlagIcon from '@mui/icons-material/Flag';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState({
@@ -18,6 +20,8 @@ const AdminDashboard = () => {
     alerts: 0,
     flaggedLogs: 0
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const users = JSON.parse(localStorage.getItem('users')) || [];
@@ -43,31 +47,43 @@ const AdminDashboard = () => {
       title: 'Total Students',
       value: stats.students,
       icon: <PeopleIcon />,
-      color: 'primary'
+      color: 'primary',
+      onClick: null
     },
     {
       title: 'Total Therapists',
       value: stats.therapists,
       icon: <SupervisorAccountIcon />,
-      color: 'info'
+      color: 'info',
+      onClick: null
     },
     {
       title: 'Session Requests',
       value: stats.sessionRequests,
       icon: <EventIcon />,
-      color: 'secondary'
+      color: 'secondary',
+      onClick: null
     },
     {
       title: 'Emergency Alerts',
       value: stats.alerts,
       icon: <WarningIcon />,
-      color: 'error'
+      color: 'error',
+      onClick: null
     },
     {
       title: 'Flagged Mood Logs',
       value: stats.flaggedLogs,
       icon: <FlagIcon />,
-      color: 'warning'
+      color: 'warning',
+      onClick: null
+    },
+    {
+      title: 'Manage Resources',
+      value: '',
+      icon: <LibraryBooksIcon />,
+      color: 'success',
+      onClick: () => navigate('/admin-resources')
     }
   ];
 
@@ -91,13 +107,21 @@ const AdminDashboard = () => {
                   </Avatar>
                   <Box>
                     <Typography variant="h6">{card.title}</Typography>
-                    <Typography variant="h5">{card.value}</Typography>
+                    {card.value !== '' && (
+                      <Typography variant="h5">{card.value}</Typography>
+                    )}
                   </Box>
                 </Box>
               </CardContent>
               <CardActions>
-                <Button fullWidth variant="outlined" color={card.color}>
-                  View Details
+                <Button
+                  fullWidth
+                  variant={card.onClick ? 'contained' : 'outlined'}
+                  color={card.color}
+                  onClick={card.onClick || undefined}
+                  disabled={!card.onClick}
+                >
+                  {card.onClick ? 'Go to Page' : 'View Details'}
                 </Button>
               </CardActions>
             </Card>

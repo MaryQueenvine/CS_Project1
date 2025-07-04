@@ -30,6 +30,7 @@ import TherapistChatPage from '../pages/TherapistChatPage';
 import TherapistProfilePage from '../pages/TherapistProfilePage';
 import AssignTherapistPage from '../pages/AssignTherapistPage';
 import EmergencyAlertReviewPage from '../pages/EmergencyAlertReviewPage';
+import AdminResourcesPage from '../pages/AdminResourcesPage';
 
 
 const AppRoutes = () => (
@@ -76,6 +77,8 @@ const AppRoutes = () => (
     <Route path="/assign-therapist" element={<AssignTherapistPage />} />
 
     <Route path="/emergency-alerts" element={<EmergencyAlertReviewPage />} />
+
+    <Route path="/admin-resources" element={<AdminResourcesPage />} />
 
 
     {/* 404 fallback */}
