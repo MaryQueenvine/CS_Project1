@@ -106,13 +106,29 @@ const Navbar = () => {
 
               {/* Therapist-specific: no student tools */}
               {currentUser.role === 'Therapist' && (
-                <>
-                  <MenuItem onClick={() => { navigate('/therapist-profile'); handleMenuClose(); }}>
-                    ⚙️ Account Settings
-                  </MenuItem>
-                  <Divider />
-                </>
+              <>
+              <MenuItem onClick={() => { navigate('/therapist-profile'); handleMenuClose(); }}>
+             ⚙️ Account Settings
+              </MenuItem>
+              <Divider />
+              </>
               )}
+
+              {currentUser.role === 'Admin' && (
+               <>
+              <MenuItem onClick={() => { navigate('/dashboard-admin'); handleMenuClose(); }}>
+                🧭 Admin Dashboard
+              </MenuItem>
+                <MenuItem onClick={() => { navigate('/assign-therapist'); handleMenuClose(); }}>
+               🔄 Assign Therapists
+               </MenuItem>
+               <MenuItem onClick={() => { navigate('/emergency-alerts'); handleMenuClose(); }}>
+                🚨 Emergency Alerts
+              </MenuItem>
+              <Divider />
+              </>
+              )}
+
 
               <MenuItem onClick={handleLogout}>🚪 Logout</MenuItem>
             </Menu>
