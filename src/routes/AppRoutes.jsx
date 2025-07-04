@@ -27,6 +27,7 @@ import ViewStudentMoodLogsPage from '../pages/ViewStudentMoodLogsPage'; // ✅ R
 import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage'; 
 import TherapistSessionRequestsPage from '../pages/TherapistSessionRequestsPage';
 import TherapistChatPage from '../pages/TherapistChatPage';
+import TherapistProfilePage from '../pages/TherapistProfilePage';
 
 
 const AppRoutes = () => (
@@ -67,6 +68,8 @@ const AppRoutes = () => (
     <Route path="/therapist-session-requests" element={<TherapistSessionRequestsPage />} />
 
     <Route path="/chat-student" element={<TherapistChatPage />} />
+
+    <Route path="/therapist-profile" element={<TherapistProfilePage />} />
 
 
     {/* 404 fallback */}
