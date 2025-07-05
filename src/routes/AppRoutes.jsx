@@ -2,12 +2,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// Auth Pages
 import LoginPage from '../components/LoginPage';
 import RegisterPage from '../components/RegisterPage';
-
-// Student Module
 import StudentDashboard from '../components/StudentDashboard';
+import TherapistDashboard from '../components/TherapistDashboard';
+import AdminDashboard from '../components/AdminDashboard';
+
 import TriageChatbotPage from '../pages/TriageChatbotPage';
 import MoodCheckInPage from '../pages/MoodCheckInPage';
 import MoodHistoryPage from '../pages/MoodHistoryPage';
@@ -21,8 +21,6 @@ import ConfirmedSessionsPage from '../pages/ConfirmedSessionsPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import ChatTherapistPage from '../pages/ChatTherapistPage';
 
-// Therapist Module
-import TherapistDashboard from '../components/TherapistDashboard';
 import TriageSummaryReviewPage from '../pages/TriageSummaryReviewPage';
 import AssignedStudentsPage from '../pages/AssignedStudentsPage';
 import ViewStudentMoodLogsPage from '../pages/ViewStudentMoodLogsPage';
@@ -30,9 +28,8 @@ import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage';
 import TherapistSessionRequestsPage from '../pages/TherapistSessionRequestsPage';
 import TherapistChatPage from '../pages/TherapistChatPage';
 import TherapistProfilePage from '../pages/TherapistProfilePage';
+import TherapistResourcesPage from '../pages/TherapistResourcesPage';
 
-// Admin Module
-import AdminDashboard from '../components/AdminDashboard';
 import AssignTherapistPage from '../pages/AssignTherapistPage';
 import EmergencyAlertReviewPage from '../pages/EmergencyAlertReviewPage';
 import AdminResourcesPage from '../pages/AdminResourcesPage';
@@ -71,6 +68,7 @@ const AppRoutes = () => (
     <Route path="/therapist-session-requests" element={<TherapistSessionRequestsPage />} />
     <Route path="/chat-student" element={<TherapistChatPage />} />
     <Route path="/therapist-profile" element={<TherapistProfilePage />} />
+    <Route path="/therapist-resources" element={<TherapistResourcesPage />} />
 
     {/* Admin Module */}
     <Route path="/dashboard-admin" element={<AdminDashboard />} />
@@ -82,9 +80,6 @@ const AppRoutes = () => (
     <Route path="/admin-session-requests" element={<AdminSessionRequestsPage />} />
     <Route path="/admin-alerts" element={<EmergencyAlertReviewPage />} />
     <Route path="/admin-flagged-logs" element={<GlobalFlaggedMoodLogsPage />} />
-
-    {/* Shared */}
-    <Route path="/global-flagged-mood-logs" element={<GlobalFlaggedMoodLogsPage />} />
 
     {/* 404 fallback */}
     <Route path="*" element={<h2>404 - Page Not Found</h2>} />
