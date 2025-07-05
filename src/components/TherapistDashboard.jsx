@@ -5,12 +5,14 @@ import {
   Button, Box, Avatar
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import ChatIcon from '@mui/icons-material/Chat';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MoodBadIcon from '@mui/icons-material/MoodBad';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 
 const features = [
   {
@@ -54,12 +56,20 @@ const features = [
     color: 'success'
   },
   {
+    title: 'Manage Resources',
+    description: 'Upload support materials for students.',
+    icon: <LibraryBooksIcon fontSize="large" />,
+    action: 'Upload Resources',
+    route: '/therapist-resources',
+    color: 'warning'
+  },
+  {
     title: 'Profile Settings',
     description: 'Edit your contact info and license file.',
     icon: <SettingsIcon fontSize="large" />,
     action: 'Edit Profile',
     route: '/therapist-profile',
-    color: 'warning'
+    color: 'secondary'
   }
 ];
 
