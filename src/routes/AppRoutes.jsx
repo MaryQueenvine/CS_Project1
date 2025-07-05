@@ -2,12 +2,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
+// Auth Pages
 import LoginPage from '../components/LoginPage';
 import RegisterPage from '../components/RegisterPage';
-import StudentDashboard from '../components/StudentDashboard';
-import TherapistDashboard from '../components/TherapistDashboard';
-import AdminDashboard from '../components/AdminDashboard';
 
+// Student Module
+import StudentDashboard from '../components/StudentDashboard';
 import TriageChatbotPage from '../pages/TriageChatbotPage';
 import MoodCheckInPage from '../pages/MoodCheckInPage';
 import MoodHistoryPage from '../pages/MoodHistoryPage';
@@ -21,17 +21,25 @@ import ConfirmedSessionsPage from '../pages/ConfirmedSessionsPage';
 import NotificationsPage from '../pages/NotificationsPage';
 import ChatTherapistPage from '../pages/ChatTherapistPage';
 
+// Therapist Module
+import TherapistDashboard from '../components/TherapistDashboard';
 import TriageSummaryReviewPage from '../pages/TriageSummaryReviewPage';
 import AssignedStudentsPage from '../pages/AssignedStudentsPage';
-import ViewStudentMoodLogsPage from '../pages/ViewStudentMoodLogsPage'; // ✅ Route target
-import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage'; 
+import ViewStudentMoodLogsPage from '../pages/ViewStudentMoodLogsPage';
+import GlobalFlaggedMoodLogsPage from '../pages/GlobalFlaggedMoodLogsPage';
 import TherapistSessionRequestsPage from '../pages/TherapistSessionRequestsPage';
 import TherapistChatPage from '../pages/TherapistChatPage';
 import TherapistProfilePage from '../pages/TherapistProfilePage';
+
+// Admin Module
+import AdminDashboard from '../components/AdminDashboard';
 import AssignTherapistPage from '../pages/AssignTherapistPage';
 import EmergencyAlertReviewPage from '../pages/EmergencyAlertReviewPage';
 import AdminResourcesPage from '../pages/AdminResourcesPage';
-
+import AdminProfilePage from '../pages/AdminProfilePage';
+import AdminStudentsPage from '../pages/AdminStudentsPage';
+import AdminTherapistsPage from '../pages/AdminTherapistsPage';
+import AdminSessionRequestsPage from '../pages/AdminSessionRequestsPage';
 
 const AppRoutes = () => (
   <Routes>
@@ -59,27 +67,24 @@ const AppRoutes = () => (
     <Route path="/dashboard-therapist" element={<TherapistDashboard />} />
     <Route path="/triage-reviews" element={<TriageSummaryReviewPage />} />
     <Route path="/assigned-students" element={<AssignedStudentsPage />} />
-    <Route path="/student-mood-logs/:email" element={<ViewStudentMoodLogsPage />} /> {/* ✅ Matches navigation */}
+    <Route path="/student-mood-logs/:email" element={<ViewStudentMoodLogsPage />} />
+    <Route path="/therapist-session-requests" element={<TherapistSessionRequestsPage />} />
+    <Route path="/chat-student" element={<TherapistChatPage />} />
+    <Route path="/therapist-profile" element={<TherapistProfilePage />} />
 
     {/* Admin Module */}
     <Route path="/dashboard-admin" element={<AdminDashboard />} />
-
-    {/* Global Mood Logs */}
-    <Route path="/global-flagged-mood-logs" element={<GlobalFlaggedMoodLogsPage />} />
-
-    {/* Therapist Session Requests */}
-    <Route path="/therapist-session-requests" element={<TherapistSessionRequestsPage />} />
-
-    <Route path="/chat-student" element={<TherapistChatPage />} />
-
-    <Route path="/therapist-profile" element={<TherapistProfilePage />} />
-
     <Route path="/assign-therapist" element={<AssignTherapistPage />} />
-
-    <Route path="/emergency-alerts" element={<EmergencyAlertReviewPage />} />
-
     <Route path="/admin-resources" element={<AdminResourcesPage />} />
+    <Route path="/admin-profile" element={<AdminProfilePage />} />
+    <Route path="/admin-students" element={<AdminStudentsPage />} />
+    <Route path="/admin-therapists" element={<AdminTherapistsPage />} />
+    <Route path="/admin-session-requests" element={<AdminSessionRequestsPage />} />
+    <Route path="/admin-alerts" element={<EmergencyAlertReviewPage />} />
+    <Route path="/admin-flagged-logs" element={<GlobalFlaggedMoodLogsPage />} />
 
+    {/* Shared */}
+    <Route path="/global-flagged-mood-logs" element={<GlobalFlaggedMoodLogsPage />} />
 
     {/* 404 fallback */}
     <Route path="*" element={<h2>404 - Page Not Found</h2>} />

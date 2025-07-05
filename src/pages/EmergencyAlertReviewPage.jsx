@@ -1,3 +1,4 @@
+// src/pages/EmergencyAlertReviewPage.jsx
 import React, { useEffect, useState } from 'react';
 import {
   Container, Typography, Paper, Box,
@@ -49,9 +50,11 @@ const EmergencyAlertReviewPage = () => {
             <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
               <strong>Flagged Message:</strong> {alert.message}
             </Typography>
-            <Typography variant="body2" mt={1}>
-              <strong>Keywords Detected:</strong> {alert.keywords.join(', ')}
-            </Typography>
+            {Array.isArray(alert.keywords) && alert.keywords.length > 0 && (
+              <Typography variant="body2" mt={1}>
+                <strong>Keywords Detected:</strong> {alert.keywords.join(', ')}
+              </Typography>
+            )}
           </Paper>
         ))
       )}

@@ -47,6 +47,14 @@ const GlobalFlaggedMoodLogsPage = () => {
     localStorage.setItem('moodCheckIns', JSON.stringify(updatedAll));
   };
 
+  const getDashboardPath = () => {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) return '/login';
+    if (currentUser.role === 'Admin') return '/dashboard-admin';
+    if (currentUser.role === 'Therapist') return '/dashboard-therapist';
+    return '/login';
+  };
+
   const hasLogs = Object.keys(groupedLogs).length > 0;
 
   return (
@@ -54,7 +62,7 @@ const GlobalFlaggedMoodLogsPage = () => {
       <Button
         startIcon={<ArrowBackIcon />}
         variant="outlined"
-        onClick={() => navigate('/dashboard-therapist')}
+        onClick={() => navigate(getDashboardPath())}
         sx={{ mb: 3 }}
       >
         Back to Dashboard
