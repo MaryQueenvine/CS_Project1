@@ -10,6 +10,7 @@ import WarningIcon from '@mui/icons-material/Warning';
 import FlagIcon from '@mui/icons-material/Flag';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -48,35 +49,35 @@ const AdminDashboard = () => {
       value: stats.students,
       icon: <PeopleIcon />,
       color: 'primary',
-      onClick: null
+      onClick: () => navigate('/admin-students')
     },
     {
       title: 'Total Therapists',
       value: stats.therapists,
       icon: <SupervisorAccountIcon />,
       color: 'info',
-      onClick: null
+      onClick: () => navigate('/admin-therapists')
     },
     {
       title: 'Session Requests',
       value: stats.sessionRequests,
       icon: <EventIcon />,
       color: 'secondary',
-      onClick: null
+      onClick: () => navigate('/admin-session-requests')
     },
     {
       title: 'Emergency Alerts',
       value: stats.alerts,
       icon: <WarningIcon />,
       color: 'error',
-      onClick: null
+      onClick: () => navigate('/admin-alerts')
     },
     {
       title: 'Flagged Mood Logs',
       value: stats.flaggedLogs,
       icon: <FlagIcon />,
       color: 'warning',
-      onClick: null
+      onClick: () => navigate('/admin-flagged-logs')
     },
     {
       title: 'Manage Resources',
@@ -84,6 +85,13 @@ const AdminDashboard = () => {
       icon: <LibraryBooksIcon />,
       color: 'success',
       onClick: () => navigate('/admin-resources')
+    },
+    {
+      title: 'Admin Profile',
+      value: '',
+      icon: <AdminPanelSettingsIcon />,
+      color: 'secondary',
+      onClick: () => navigate('/admin-profile')
     }
   ];
 
@@ -116,12 +124,11 @@ const AdminDashboard = () => {
               <CardActions>
                 <Button
                   fullWidth
-                  variant={card.onClick ? 'contained' : 'outlined'}
+                  variant="contained"
                   color={card.color}
-                  onClick={card.onClick || undefined}
-                  disabled={!card.onClick}
+                  onClick={card.onClick}
                 >
-                  {card.onClick ? 'Go to Page' : 'View Details'}
+                  Go to Page
                 </Button>
               </CardActions>
             </Card>
