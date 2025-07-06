@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,8 +58,25 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Your React dev server
+    'http://127.0.0.1:3000',
+    # Add your production domain here
+]
+
+# CORS Settings (if using django-cors-headers)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_COOKIE_SECURE = False
 
 
 ROOT_URLCONF = 'Studentmindcarebackend.urls'
@@ -153,8 +175,16 @@ DEFAULT_EXCEPTION_REPORTER = "django.views.debug.ExceptionReporter"
 DEFAULT_EXCEPTION_REPORTER_FILTER = "django.views.debug.SafeExceptionReporterFilter"
 
 
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
-
+# Optional: Only raise error in production, allow development without API key
+if not OPENAI_API_KEY:
+    if not DEBUG:  # Only require in production
+        raise ImproperlyConfigured("OPENAI_API_KEY environment variable is required")
+    else:
+        # In development, you can set a default or warning
+        print("⚠️  WARNING: OPENAI_API_KEY not set. Chatbot will not work.")
+        OPENAI_API_KEY = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
