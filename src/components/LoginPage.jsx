@@ -4,13 +4,14 @@ import {
   Typography, TextField, Box, Alert
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import { firebaseConfig } from '../firebaseConfig';
+import { auth } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -19,19 +20,86 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
+
+    console.log('Login attempt with:', { email: formData.email, passwordLength: formData.password.length });
+    console.log('Firebase auth instance:', auth);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(firebaseConfig, formData.email, formData.password);
+      // Test Firebase authentication
+      console.log('Attempting Firebase authentication...');
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      const response = await fetch(`/api/get_user_role/${user.uid}`);
-      const data = await response.json();
+      console.log('Firebase authentication successful!');
+      console.log('User details:', {
+        uid: user.uid,
+        email: user.email,
+        emailVerified: user.emailVerified,
+        displayName: user.displayName
+      });
 
-      if (data.role === 'Student') navigate('/dashboard-student');
-      else if (data.role === 'Therapist') navigate('/dashboard-therapist');
-      else if (data.role === 'Admin') navigate('/dashboard-admin');
+      // Fetch user role from Django backend
+      console.log('Fetching user role from Django...');
+      const response = await fetch(`/users/api/get_user_role/${user.uid}`);
+
+      console.log('Django response status:', response.status);
+      console.log('Django response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Django API error:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('User role data from Django:', data);
+
+      // Navigate based on role
+      if (data.role === 'student') {
+        console.log('Navigating to student dashboard...');
+        navigate('/dashboard-student');
+      } else if (data.role === 'therapist') {
+        console.log('Navigating to therapist dashboard...');
+        navigate('/dashboard-therapist');
+      } else if (data.role === 'admin') {
+        console.log('Navigating to admin dashboard...');
+        navigate('/dashboard-admin');
+      } else {
+        console.error('Unknown role:', data.role);
+        setError('Invalid user role. Please contact support.');
+      }
+
     } catch (error) {
-      setError('Invalid credentials. Please try again.');
+      console.error('Login error details:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack,
+        error: error
+      });
+
+      // Handle specific Firebase errors
+      if (error.code === 'auth/user-not-found') {
+        setError('No account found with this email address. Please check your email or register first.');
+      } else if (error.code === 'auth/wrong-password') {
+        setError('Incorrect password. Please try again.');
+      } else if (error.code === 'auth/invalid-email') {
+        setError('Invalid email address format.');
+      } else if (error.code === 'auth/user-disabled') {
+        setError('This account has been disabled. Please contact support.');
+      } else if (error.code === 'auth/too-many-requests') {
+        setError('Too many failed attempts. Please try again later.');
+      } else if (error.code === 'auth/network-request-failed') {
+        setError('Network error. Please check your internet connection.');
+      } else if (error.code === 'auth/invalid-credential') {
+        setError('Invalid credentials. Please check your email and password.');
+      } else if (error.message.includes('HTTP error')) {
+        setError('Unable to verify user role. Please try again.');
+      } else {
+        setError(`Login failed: ${error.message}`);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,11 +137,13 @@ const LoginPage = () => {
             <TextField
               name="email"
               label="Email"
+              type="email"
               fullWidth
               margin="normal"
               value={formData.email}
               onChange={handleChange}
               required
+              disabled={loading}
             />
 
             <TextField
@@ -85,6 +155,7 @@ const LoginPage = () => {
               value={formData.password}
               onChange={handleChange}
               required
+              disabled={loading}
             />
 
             <Box mt={3}>
@@ -92,15 +163,23 @@ const LoginPage = () => {
                 type="submit"
                 className="btn btn-primary"
                 style={{ width: '100%' }}
+                disabled={loading}
               >
-                Login
+                {loading ? 'Logging in...' : 'Login'}
               </button>
             </Box>
           </form>
 
           <Box mt={2} textAlign="center">
             <Typography variant="body2" color="textSecondary">
-              Don’t have an account? <Link to="/register" style={{ color: '#764ba2', textDecoration: 'underline' }}>Register</Link>
+              Don't have an account? <Link to="/register" style={{ color: '#764ba2', textDecoration: 'underline' }}>Register</Link>
+            </Typography>
+          </Box>
+
+          {/* Debug info - remove in production */}
+          <Box mt={2} textAlign="center">
+            <Typography variant="caption" color="textSecondary">
+              Debug: Try logging in with the email you just registered (lenny@gmail.com)
             </Typography>
           </Box>
         </Box>

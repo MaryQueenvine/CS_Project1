@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
 import '../pages/Lnadingpage.css';
 import {
-  Typography, TextField, Box, MenuItem, Alert, CircularProgress
+  Container, Typography, TextField, Button,
+  Box, MenuItem, Alert, CircularProgress
 } from '@mui/material';
-import { firebaseConfig } from '../firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { app } from '../firebaseConfig';
 
 const roles = ['Student', 'Therapist', 'Admin'];
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const auth = getAuth(app);
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -39,32 +42,44 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const userCredential = await createUserWithEmailAndPassword(firebaseConfig, formData.email, formData.password);
+      //Create user in Firebase
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
       const user = userCredential.user;
 
-      const response = await fetch('/api/register_user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          uid: user.uid,
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          faculty: formData.faculty,
-          year: formData.year,
-          licenseNumber: formData.licenseNumber,
-          specialty: formData.specialty,
-          experience: formData.experience
-        }),
-      });
+      //Send data to Django backend
+     const response = await fetch('http://localhost:8000/users/api/register_user', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    uid: user.uid,
+    username: formData.email,
+    email: formData.email,
+    first_name: formData.name.split(' ')[0],
+    last_name: formData.name.split(' ').slice(1).join(' ') || '',
+    role: formData.role.toLowerCase(),
+    faculty: formData.faculty,
+    year: formData.year,
+    licenseNumber: formData.licenseNumber,
+    specialty: formData.specialty,
+    experience: formData.experience
+  }),
+});
+
 
       if (!response.ok) {
+        const errorData = await response.json();
+        console.error("DB registration error:", errorData);
         throw new Error('Failed to register user in the database');
       }
 
       alert('Registered successfully!');
       navigate('/login');
     } catch (error) {
+      console.error(error);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -72,30 +87,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="gradient-bg" style={{ minHeight: '100vh', paddingTop: '100px' }}>
-      <header style={{ background: 'rgba(255,255,255,0.95)', padding: '1rem 0' }}>
-        <nav className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="logo">Student MindCare</div>
-          <div>
-            <Link to="/login" className="btn btn-secondary" style={{ marginRight: '1rem' }}>Login</Link>
-            <Link to="/register" className="btn btn-primary">Register</Link>
-          </div>
-        </nav>
-      </header>
-
-      <main className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <Box
-          sx={{
-            background: 'white',
-            padding: '2rem',
-            borderRadius: '15px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-            maxWidth: '500px',
-            width: '100%',
-            mt: 4
-          }}
-        >
-          <Typography variant="h4" align="center" gutterBottom style={{ color: '#764ba2' }}>
+    <Box className="gradient-bg" minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={2}>
+      <Container maxWidth="sm">
+        <Box p={4} borderRadius={3} boxShadow={3} bgcolor="white">
+          <Typography variant="h4" align="center" gutterBottom sx={{ color: '#764ba2', fontWeight: 'bold' }}>
             Register Account
           </Typography>
 
@@ -111,7 +106,6 @@ const RegisterPage = () => {
               onChange={handleChange}
               required
             />
-
             <TextField
               name="email"
               label="Email"
@@ -122,7 +116,6 @@ const RegisterPage = () => {
               onChange={handleChange}
               required
             />
-
             <TextField
               name="password"
               label="Password"
@@ -133,7 +126,6 @@ const RegisterPage = () => {
               onChange={handleChange}
               required
             />
-
             <TextField
               select
               name="role"
@@ -205,25 +197,25 @@ const RegisterPage = () => {
             )}
 
             <Box mt={3}>
-              <button
+              <Button
                 type="submit"
+                fullWidth
                 className="btn btn-primary"
-                style={{ width: '100%' }}
                 disabled={loading}
               >
                 {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Register'}
-              </button>
+              </Button>
             </Box>
           </form>
 
           <Box mt={2} textAlign="center">
-            <Typography variant="body2" color="textSecondary">
-              Already have an account? <Link to="/login" style={{ color: '#764ba2', textDecoration: 'underline' }}>Login</Link>
+            <Typography variant="body2">
+              Already have an account? <a href="/login" style={{ color: '#764ba2' }}>Login</a>
             </Typography>
           </Box>
         </Box>
-      </main>
-    </div>
+      </Container>
+    </Box>
   );
 };
 
