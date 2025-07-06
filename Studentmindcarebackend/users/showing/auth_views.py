@@ -63,7 +63,6 @@ def register_user(request):
             'details': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['POST'])
 def login_user(request):
     try:
@@ -93,6 +92,39 @@ def login_user(request):
 
     except Exception as e:
         logger.error("Unexpected error during login: %s", str(e))
+        return Response({
+            'error': 'Internal server error'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def get_user_role(request, uid):
+    """
+    Get user role by Firebase UID
+    """
+    logger.info(f"Getting user role for UID: {uid}")
+
+    try:
+        user = CustomUser.objects.get(uid=uid)
+        logger.info(f"User found: {user.email} with role: {user.role}")
+
+        return Response({
+            'role': user.role,
+            'user_id': user.id,
+            'email': user.email,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username,
+            'faculty': user.faculty,
+            'year': user.year
+        }, status=status.HTTP_200_OK)
+
+    except CustomUser.DoesNotExist:
+        logger.error(f"User not found for UID: {uid}")
+        return Response({
+            'error': 'User not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Error getting user role: {str(e)}")
         return Response({
             'error': 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
