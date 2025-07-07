@@ -1,15 +1,17 @@
 from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 from rest_framework.response import Response
 from rest_framework import status
 from ..serializer import UserSerializer
 from ..models import CustomUser
 import logging
+from rest_framework.parsers import MultiPartParser, FormParser
+
 
 logger = logging.getLogger(__name__)
 
-
 @api_view(['POST'])
+@parser_classes([MultiPartParser, FormParser])
 def register_user(request):
     try:
         logger.info("Received registration data: %s", request.data)
@@ -36,6 +38,8 @@ def register_user(request):
             return Response({
                 'error': 'User with this email already exists'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+        license_file = request.FILES.get('licenseFile')  # optional
 
         # Create user using serializer
         serializer = UserSerializer(data=request.data)

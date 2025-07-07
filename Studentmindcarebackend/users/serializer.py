@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import CustomUser
 from django.contrib.auth.hashers import make_password
+from .models import MoodEntry, MoodPattern
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -116,3 +117,61 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+#moodcheckin
+class MoodEntrySerializer(serializers.ModelSerializer):
+    mood_display = serializers.CharField(source='get_mood_display', read_only=True)
+    date = serializers.DateField(read_only=True)
+
+    class Meta:
+        model = MoodEntry
+        fields = ['id', 'mood', 'mood_display', 'note', 'timestamp', 'date', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+    def validate_mood(self, value):
+        valid_moods = [choice[0] for choice in MoodEntry.MOOD_CHOICES]
+        if value not in valid_moods:
+            raise serializers.ValidationError(f"Invalid mood. Must be one of: {valid_moods}")
+        return value
+
+    def validate_note(self, value):
+        if value and len(value) > 1000:
+            raise serializers.ValidationError("Note cannot exceed 1000 characters")
+        return value
+
+
+class MoodPatternSerializer(serializers.ModelSerializer):
+    dominant_mood_display = serializers.CharField(source='get_dominant_mood_display', read_only=True)
+
+    class Meta:
+        model = MoodPattern
+        fields = ['id', 'date', 'dominant_mood', 'dominant_mood_display', 'mood_score',
+                  'total_entries', 'notes_summary', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+
+class MoodStatsSerializer(serializers.Serializer):
+    total_entries = serializers.IntegerField()
+    mood_counts = serializers.DictField()
+    days_tracked = serializers.IntegerField()
+    average_per_day = serializers.FloatField()
+    streak = serializers.IntegerField()
+
+
+class MoodInsightsSerializer(serializers.Serializer):
+    """Serializer for mood insights and analytics"""
+    most_common_mood = serializers.CharField()
+    mood_trend = serializers.CharField()  # 'improving', 'declining', 'stable'
+    best_day = serializers.DateField()
+    challenging_day = serializers.DateField()
+    weekly_average = serializers.FloatField()
+    monthly_average = serializers.FloatField()
+    recommendations = serializers.ListField(child=serializers.CharField())
+
+#Therapists resources
+from .models import Resource
+
+class ResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resource
+        fields = ['id', 'title', 'link', 'created_at', 'uploaded_by']

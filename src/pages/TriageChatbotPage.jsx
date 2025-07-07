@@ -45,6 +45,13 @@ const TriageChatbotPage = () => {
   }, []);
 
   const sendMessage = async () => {
+    /*const [sessionType, setSessionType] = useState('support'); // or 'triage'
+// In your sendMessage function, include session type:
+body: JSON.stringify({
+  message: inputValue,
+  session_type: sessionType
+})*/
+
     if (!inputValue.trim()) return;
 
     const userMessage = {

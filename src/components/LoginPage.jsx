@@ -41,7 +41,7 @@ const LoginPage = () => {
 
       // Fetch user role from Django backend
       console.log('Fetching user role from Django...');
-      const response = await fetch(`/users/api/get_user_role/${user.uid}`);
+      const response = await fetch(`http://localhost:8000/users/api/get_user_role/${user.uid}`);
 
       console.log('Django response status:', response.status);
       console.log('Django response ok:', response.ok);

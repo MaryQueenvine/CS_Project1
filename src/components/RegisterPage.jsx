@@ -4,6 +4,8 @@ import {
   Box, MenuItem, Alert, CircularProgress
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const roles = ['Student', 'Therapist', 'Admin'];
 const ADMIN_SECRET_CODE = '143200';
@@ -21,7 +23,7 @@ const RegisterPage = () => {
     specialty: '',
     experience: '',
     adminCode: '',
-    licenseFile: null,
+    licenseFile: null, // added for therapist upload
   });
 
   const [error, setError] = useState('');
@@ -35,38 +37,76 @@ const RegisterPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    const {
+      name, email, password, role,
+      faculty, year, specialty, experience,
+      adminCode, licenseFile,
+    } = formData;
 
-      const { name, email, password, role, faculty, year, specialty, experience, adminCode, licenseFile } = formData;
-
-      // Basic field check
+    try {
       if (!name || !email || !password || !role) {
-        setError('Please fill in all required fields.');
-        return;
+        throw new Error('Please fill in all required fields.');
       }
 
-      // Therapist-specific file check
-      if (role === 'Therapist' && !licenseFile) {
-        setError('Please upload a copy of your license.');
-        return;
-      }
-
-      // Admin secret code check
       if (role === 'Admin' && adminCode !== ADMIN_SECRET_CODE) {
-        setError('Invalid admin code. Access denied.');
-        return;
+        throw new Error('Invalid admin code. Access denied.');
       }
 
-      // In real case: send FormData to Django backend
-      alert('Registered successfully!');
+      if (role === 'Therapist' && !licenseFile) {
+        throw new Error('Please upload your license document.');
+      }
+
+      // Firebase create user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      const [firstName, ...lastNameParts] = name.trim().split(' ');
+      const lastName = lastNameParts.join(' ');
+
+      // Use FormData for file + fields
+      const formDataToSend = new FormData();
+      formDataToSend.append('uid', uid);
+      formDataToSend.append('email', email);
+      formDataToSend.append('username', email);
+      formDataToSend.append('first_name', firstName);
+      formDataToSend.append('last_name', lastName);
+      formDataToSend.append('role', role.toLowerCase());
+
+      if (role === 'Student') {
+        formDataToSend.append('faculty', faculty);
+        formDataToSend.append('year', year);
+      }
+
+      if (role === 'Therapist') {
+        formDataToSend.append('specialty', specialty);
+        formDataToSend.append('experience', experience);
+        formDataToSend.append('licenseFile', licenseFile);
+      }
+
+      const response = await fetch('http://localhost:8000/api/register_user', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Registration failed.');
+      }
+
+      alert('Registration successful!');
       navigate('/login');
-    }, 1000);
+
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -178,8 +218,9 @@ const RegisterPage = () => {
                 <input
                   type="file"
                   name="licenseFile"
-                  accept=".pdf, .jpg, .jpeg, .png"
+                  accept=".pdf,.jpg,.jpeg,.png"
                   onChange={handleChange}
+                  required
                 />
               </Box>
             </>

@@ -150,23 +150,32 @@ import logging.config
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
         },
     },
+
     'root': {
         'handlers': ['console'],
         'level': 'INFO',
     },
+
     'loggers': {
         'Studentmindcarebackend': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # <-- this is what will show 404s/500s
+            'propagate': False,
+        },
     },
 }
+
 
 logging.config.dictConfig(LOGGING)
 
