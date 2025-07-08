@@ -1,4 +1,3 @@
-// src/pages/TherapistChatPage.jsx
 import React, { useEffect, useState } from 'react';
 import {
   Container, Typography, Paper, Box, TextField,

@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users',
+    'corsheaders',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -48,7 +55,29 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',  # Your React dev server
+    'http://127.0.0.1:3000',
+    # Add your production domain here
+]
+
+# CORS Settings (if using django-cors-headers)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_COOKIE_SECURE = False
+
 
 ROOT_URLCONF = 'Studentmindcarebackend.urls'
 
@@ -106,7 +135,65 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
 
+
+# Logging Configuration
+LOGGING_CONFIG = None  # Disable Django auto logging config
+
+import logging.config
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+
+    'loggers': {
+        'Studentmindcarebackend': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',  # <-- this is what will show 404s/500s
+            'propagate': False,
+        },
+    },
+}
+
+
+logging.config.dictConfig(LOGGING)
+
+CSRF_FAILURE_VIEW = 'users.showing.csrf.csrf_failure'
+DEFAULT_EXCEPTION_REPORTER = "django.views.debug.ExceptionReporter"
+DEFAULT_EXCEPTION_REPORTER_FILTER = "django.views.debug.SafeExceptionReporterFilter"
+
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
+# Optional: Only raise error in production, allow development without API key
+if not OPENAI_API_KEY:
+    if not DEBUG:  # Only require in production
+        raise ImproperlyConfigured("OPENAI_API_KEY environment variable is required")
+    else:
+        # In development, you can set a default or warning
+        print("⚠️  WARNING: OPENAI_API_KEY not set. Chatbot will not work.")
+        OPENAI_API_KEY = None
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
