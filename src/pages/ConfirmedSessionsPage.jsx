@@ -12,7 +12,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import Header from '../pages/Header';
-import '../pages/Landingpage.css';
+import '../pages/Landingpage.css'; // ensure this is the correct path
 
 const ConfirmedSessionsPage = () => {
   const navigate = useNavigate();
@@ -33,21 +33,27 @@ const ConfirmedSessionsPage = () => {
     <div className="page-container">
       <Header />
 
-      {/* Top Banner */}
-      <div className="animated-section" style={{ padding: '60px 20px' }}>
-        <Typography variant="h4" align="center" sx={{ fontWeight: 'bold', color: '#fff' }}>
+      {/* Hero Banner */}
+      <div
+        className="animated-section"
+        style={{
+          background: 'linear-gradient(to right, #667eea, #764ba2)',
+          padding: '60px 20px',
+          textAlign: 'center',
+          borderRadius: '0 0 16px 16px',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+          color: '#fff'
+        }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
           My Confirmed Sessions
         </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          sx={{ mt: 1, color: '#e0f7fa', opacity: 0.9 }}
-        >
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
           A summary of your scheduled therapy appointments
         </Typography>
       </div>
 
-      {/* Main Content */}
+      {/* Content */}
       <Container maxWidth="md" sx={{ py: 5 }}>
         <Box textAlign="left" sx={{ mb: 3 }}>
           <Button
@@ -55,11 +61,11 @@ const ConfirmedSessionsPage = () => {
             variant="outlined"
             onClick={() => navigate('/dashboard-student')}
             sx={{
-              borderColor: '#0288d1',
-              color: '#0288d1',
+              borderColor: '#764ba2',
+              color: '#764ba2',
               '&:hover': {
-                backgroundColor: '#e1f5fe',
-                borderColor: '#0288d1'
+                backgroundColor: '#ede7f6',
+                borderColor: '#5c3a8d'
               }
             }}
           >
@@ -75,15 +81,16 @@ const ConfirmedSessionsPage = () => {
           confirmed.map((session, idx) => (
             <Card
               key={idx}
-              elevation={3}
+              elevation={4}
               sx={{
                 mb: 3,
                 borderRadius: 3,
-                background: 'linear-gradient(to right, #e1f5fe, #ffffff)'
+                background: 'linear-gradient(to right, #ede7f6, #ffffff)',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
               }}
             >
               <CardContent>
-                <Typography variant="h6" sx={{ color: '#0288d1', fontWeight: 'bold', mb: 1 }}>
+                <Typography variant="h6" sx={{ color: '#5e35b1', fontWeight: 'bold', mb: 1 }}>
                   {session.topic}
                 </Typography>
 
