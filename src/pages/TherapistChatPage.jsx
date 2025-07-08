@@ -6,6 +6,8 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import ChatBubble from '../components/ChatBubble';
+import Header from './Header';
+import './Landingpage.css';
 
 const TherapistChatPage = () => {
   const navigate = useNavigate();
@@ -61,65 +63,127 @@ const TherapistChatPage = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        variant="outlined"
-        onClick={() => navigate('/dashboard-therapist')}
-        sx={{ mb: 3 }}
+    <div className="page-container">
+      <Header />
+
+      {/* Hero Banner */}
+      <div
+        className="animated-section"
+        style={{ background: 'linear-gradient(to right, #7b1fa2, #512da8)' }}
       >
-        Back to Dashboard
-      </Button>
+        <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+          💬 Therapist Chat
+        </Typography>
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+          Send and receive messages from your assigned students
+        </Typography>
+      </div>
 
-      <Typography variant="h5" gutterBottom>
-        Therapist-Student Messaging
-      </Typography>
-
-      <FormControl fullWidth sx={{ my: 2 }}>
-        <InputLabel>Select Student</InputLabel>
-        <Select
-          value={selectedStudent}
-          label="Select Student"
-          onChange={(e) => setSelectedStudent(e.target.value)}
+      <Container maxWidth="sm" sx={{ py: 4 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          variant="outlined"
+          onClick={() => navigate('/dashboard-therapist')}
+          sx={{
+            mb: 3,
+            borderColor: '#7e57c2',
+            color: '#7e57c2',
+            fontWeight: 'bold',
+            '&:hover': {
+              backgroundColor: '#f3e5f5',
+              borderColor: '#5e35b1'
+            }
+          }}
         >
-          {assignedStudents.map((entry, idx) => (
-            <MenuItem key={idx} value={entry.studentEmail}>
-              {entry.studentEmail}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          Back to Dashboard
+        </Button>
 
-      {selectedStudent && (
-        <>
-          <Paper sx={{ p: 2, mb: 2, minHeight: 200 }}>
-            {messages.length === 0 ? (
-              <Typography color="text.secondary">No messages yet.</Typography>
-            ) : (
-              messages.map((msg, idx) => (
-                <ChatBubble key={idx} {...msg} />
-              ))
-            )}
-          </Paper>
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <InputLabel>Select Student</InputLabel>
+          <Select
+            value={selectedStudent}
+            label="Select Student"
+            onChange={(e) => setSelectedStudent(e.target.value)}
+            sx={{ backgroundColor: 'white', borderRadius: 1 }}
+          >
+            {assignedStudents.map((entry, idx) => (
+              <MenuItem key={idx} value={entry.studentEmail}>
+                {entry.studentEmail}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-          <Divider sx={{ my: 2 }} />
+        {selectedStudent && (
+          <>
+            <Paper
+              sx={{
+                p: 2,
+                mb: 2,
+                minHeight: 240,
+                backgroundColor: '#f8f9ff',
+                borderRadius: 2,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                maxHeight: 300,
+                overflowY: 'auto'
+              }}
+            >
+              {messages.length === 0 ? (
+                <Typography color="text.secondary">No messages yet.</Typography>
+              ) : (
+                messages.map((msg, idx) => (
+                  <Box
+                    key={idx}
+                    className={`chat-bubble ${msg.from === 'therapist' ? 'user' : 'bot'}`}
+                    sx={{
+                      maxWidth: '80%',
+                      ml: msg.from === 'therapist' ? 'auto' : 0,
+                      mr: msg.from !== 'therapist' ? 'auto' : 0
+                    }}
+                  >
+                    <Typography variant="body2">{msg.text}</Typography>
+                    <Typography variant="caption" sx={{ float: 'right', fontSize: '0.7rem', opacity: 0.6 }}>
+                      {new Date(msg.time).toLocaleTimeString()}
+                    </Typography>
+                  </Box>
+                ))
+              )}
+            </Paper>
 
-          <TextField
-            fullWidth
-            placeholder="Type your message..."
-            multiline
-            rows={2}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <Box mt={2}>
-            <Button variant="contained" fullWidth onClick={handleSend}>
-              Send
-            </Button>
-          </Box>
-        </>
-      )}
-    </Container>
+            <Divider sx={{ my: 2 }} />
+
+            <TextField
+              fullWidth
+              multiline
+              rows={2}
+              value={input}
+              placeholder="Type your message..."
+              onChange={(e) => setInput(e.target.value)}
+              sx={{ backgroundColor: 'white', borderRadius: 1 }}
+            />
+
+            <Box mt={2}>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={handleSend}
+                sx={{
+                  background: 'linear-gradient(to right, #7b1fa2, #512da8)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  textTransform: 'none',
+                  '&:hover': {
+                    background: 'linear-gradient(to right, #5e35b1, #311b92)'
+                  }
+                }}
+              >
+                Send
+              </Button>
+            </Box>
+          </>
+        )}
+      </Container>
+    </div>
   );
 };
 
