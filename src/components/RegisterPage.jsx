@@ -23,7 +23,7 @@ const RegisterPage = () => {
     specialty: '',
     experience: '',
     adminCode: '',
-    licenseFile: null, // added for therapist upload
+    licenseNumber: '',
   });
 
   const [error, setError] = useState('');
@@ -57,8 +57,8 @@ const RegisterPage = () => {
         throw new Error('Invalid admin code. Access denied.');
       }
 
-      if (role === 'Therapist' && !licenseFile) {
-        throw new Error('Please upload your license document.');
+      if (role === 'Therapist' && !formData.licenseNumber) {
+        throw new Error('Please enter your therapist ID number.');
       }
 
       // Firebase create user
@@ -85,10 +85,10 @@ const RegisterPage = () => {
       if (role === 'Therapist') {
         formDataToSend.append('specialty', specialty);
         formDataToSend.append('experience', experience);
-        formDataToSend.append('licenseFile', licenseFile);
+        formDataToSend.append('licenseNumber', formData.licenseNumber);
       }
 
-      const response = await fetch('http://localhost:8000/api/register_user', {
+      const response = await fetch('http://localhost:8000/users/api/register_user', {
         method: 'POST',
         body: formDataToSend,
       });
@@ -211,18 +211,14 @@ const RegisterPage = () => {
                 onChange={handleChange}
                 required
               />
-              <Box mt={2}>
-                <Typography variant="body2" gutterBottom>
-                  Upload License (PDF, PNG, JPG)
-                </Typography>
-                <input
-                  type="file"
-                  name="licenseFile"
-                  accept=".pdf,.jpg,.jpeg,.png"
+              <TextField
+                  name="licenseNumber"
+                  label="Therapist ID Number"
+                  fullWidth
+                  margin="normal"
+                  value={formData.licenseNumber}
                   onChange={handleChange}
-                  required
-                />
-              </Box>
+                  />
             </>
           )}
 

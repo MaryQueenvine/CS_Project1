@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
     licenseNumber = models.CharField(max_length=100, blank=True, null=True)
     specialty = models.CharField(max_length=100, blank=True, null=True)
     experience = models.CharField(max_length=10, blank=True, null=True)
+    license_document = models.FileField(upload_to='licenses/', null=True, blank=True)
 
     # Shared/extra fields
     is_in_crisis = models.BooleanField(default=False)

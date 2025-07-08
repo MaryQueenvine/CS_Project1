@@ -6,6 +6,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import { auth } from '../firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Header from '../pages/Header';
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -54,6 +55,14 @@ const LoginPage = () => {
 
       const data = await response.json();
       console.log('User role data from Django:', data);
+
+      localStorage.setItem('user', JSON.stringify({
+        email: data.email,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        username: data.username,
+        role: data.role
+      }));
 
       // Navigate based on role
       if (data.role === 'student') {
@@ -105,15 +114,7 @@ const LoginPage = () => {
 
   return (
     <div className="gradient-bg" style={{ minHeight: '100vh', paddingTop: '100px' }}>
-      <header style={{ background: 'rgba(255,255,255,0.95)', padding: '1rem 0' }}>
-        <nav className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div className="logo">Student MindCare</div>
-          <div>
-            <Link to="/login" className="btn btn-secondary" style={{ marginRight: '1rem' }}>Login</Link>
-            <Link to="/register" className="btn btn-primary">Register</Link>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       <main className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Box
