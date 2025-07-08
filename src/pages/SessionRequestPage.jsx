@@ -1,9 +1,12 @@
+// src/pages/SessionRequestPage.jsx
 import React, { useState } from 'react';
 import {
   Container, Typography, TextField, Button,
-  MenuItem, Box, Alert
+  MenuItem, Box, Alert, Paper
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Header from '../pages/Header';
+import '../pages/Landingpage.css'; // For fade-in, animated-section, etc.
 
 const urgencies = ['Low', 'Medium', 'High'];
 
@@ -52,76 +55,117 @@ const SessionRequestPage = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 6 }}>
-      <Typography variant="h4" gutterBottom textAlign="center">
-        Request a Therapy Session
-      </Typography>
+    <div className="page-container">
+      <Header />
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>Session request submitted!</Alert>}
+      {/* Hero Section */}
+      <div
+        className="animated-section"
+        style={{
+          background: 'linear-gradient(to right, #667eea, #764ba2)',
+          color: 'white',
+          padding: '50px 20px',
+          textAlign: 'center',
+          borderRadius: '0 0 16px 16px',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.15)'
+        }}
+      >
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+          Request a Therapy Session
+        </Typography>
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+          Submit a confidential request to speak with a therapist
+        </Typography>
+      </div>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          name="topic"
-          label="Topic / Concern"
-          fullWidth
-          margin="normal"
-          value={formData.topic}
-          onChange={handleChange}
-          required
-        />
+      <Container maxWidth="sm" sx={{ py: 5 }}>
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3 }} className="fade-in">
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {success && <Alert severity="success" sx={{ mb: 2 }}>Session request submitted!</Alert>}
 
-        <TextField
-          name="preferredTime"
-          label="Preferred Time"
-          type="datetime-local"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ shrink: true }}
-          value={formData.preferredTime}
-          onChange={handleChange}
-          required
-        />
+          <form onSubmit={handleSubmit}>
+            <TextField
+              name="topic"
+              label="Topic / Concern"
+              placeholder="e.g., Anxiety, Stress, Time Management..."
+              fullWidth
+              margin="normal"
+              value={formData.topic}
+              onChange={handleChange}
+              required
+            />
 
-        <TextField
-          select
-          name="urgency"
-          label="Urgency"
-          fullWidth
-          margin="normal"
-          value={formData.urgency}
-          onChange={handleChange}
-        >
-          {urgencies.map(level => (
-            <MenuItem key={level} value={level}>{level}</MenuItem>
-          ))}
-        </TextField>
+            <TextField
+              name="preferredTime"
+              label="Preferred Time"
+              type="datetime-local"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true }}
+              value={formData.preferredTime}
+              onChange={handleChange}
+              required
+            />
 
-        <Box mt={3}>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Submit Request
-          </Button>
-        </Box>
-
-        <Box mt={2} textAlign="center">
-          <Button onClick={() => navigate('/dashboard-student')}>
-            Back to Dashboard
-          </Button>
-        </Box>
-
-        {success && (
-          <Box mt={2} textAlign="center">
-            <Button
-              variant="outlined"
-              color="info"
-              onClick={() => navigate('/session-requests')}
+            <TextField
+              select
+              name="urgency"
+              label="Urgency Level"
+              fullWidth
+              margin="normal"
+              value={formData.urgency}
+              onChange={handleChange}
             >
-              View My Requests
-            </Button>
-          </Box>
-        )}
-      </form>
-    </Container>
+              {urgencies.map(level => (
+                <MenuItem key={level} value={level}>{level}</MenuItem>
+              ))}
+            </TextField>
+
+            <Box mt={3}>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                sx={{
+                  py: 1.5,
+                  fontSize: '1.1rem',
+                  background: 'linear-gradient(to right, #667eea, #764ba2)',
+                  color: 'white',
+                  textTransform: 'none',
+                  '&:hover': {
+                    background: 'linear-gradient(to right, #5a67d8, #6b46c1)'
+                  }
+                }}
+              >
+                Submit Request
+              </Button>
+            </Box>
+
+            <Box mt={2} textAlign="center">
+              <Button
+                variant="text"
+                onClick={() => navigate('/dashboard-student')}
+                sx={{ color: '#667eea' }}
+              >
+                Back to Dashboard
+              </Button>
+            </Box>
+
+            {success && (
+              <Box mt={2} textAlign="center">
+                <Button
+                  variant="outlined"
+                  color="info"
+                  onClick={() => navigate('/session-requests')}
+                >
+                  View My Requests
+                </Button>
+              </Box>
+            )}
+          </form>
+        </Paper>
+      </Container>
+    </div>
   );
 };
 

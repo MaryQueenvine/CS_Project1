@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import '../pages/Lnadingpage.css';
+
+import '../pages/Landingpage.css'; // ✅ Fixed typo
+
 import {
   Typography, TextField, Box, Alert
 } from '@mui/material';

@@ -1,31 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  Container, Typography, Box, Paper, Button,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Snackbar, Alert
+  Snackbar, Alert, Button, Typography
 } from '@mui/material';
-
-import ChatIcon from '@mui/icons-material/Chat';
-import MoodIcon from '@mui/icons-material/Mood';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import ScheduleIcon from '@mui/icons-material/Schedule';
-import ArticleIcon from '@mui/icons-material/Article';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-
 import { useNavigate } from 'react-router-dom';
+
+import Header from '../pages/Header'; // ensure Header is imported correctly
+
+import '../pages/Landingpage.css'; // Ensure this path is correct
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-
   const [openConfirm, setOpenConfirm] = useState(false);
   const [alertSent, setAlertSent] = useState(false);
+
+  useEffect(() => {
+    // Animate on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   const handleEmergencyClick = () => setOpenConfirm(true);
 
   const handleSendAlert = () => {
     setOpenConfirm(false);
     setAlertSent(true);
-
     const currentUser = JSON.parse(localStorage.getItem('user'));
     const newAlert = {
       studentId: currentUser?.email || 'anonymous@student.com',
@@ -33,155 +38,97 @@ const StudentDashboard = () => {
       reason: 'Triggered from Emergency Button',
       reviewed: false
     };
-
     const existingAlerts = JSON.parse(localStorage.getItem('emergencyAlerts')) || [];
     existingAlerts.push(newAlert);
     localStorage.setItem('emergencyAlerts', JSON.stringify(existingAlerts));
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 6 }}>
-      <Box mb={4} textAlign="center">
-        <Typography variant="h4" fontWeight="bold">
-          Welcome to Student MindCare
-        </Typography>
-      </Box>
+    <>
+      <Header />
 
-      {/* Triage */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <ChatIcon color="primary" sx={{ mr: 1 }} />
-          <Typography variant="h6">Triage Chatbot</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Begin your mental health check-in through a guided chatbot.
-        </Typography>
-        <Button variant="contained" color="primary" fullWidth onClick={() => navigate('/triage-chatbot')}>
-          Start Triage
-        </Button>
-        <Button
-         variant="text"
-          fullWidth
-          onClick={() => navigate('/triage-summaries')}
-          >
-          View Past Triage Summaries
-          </Button>
+      <section className="hero" style={{ paddingTop: '140px' }}>
+        <div className="container">
+          <div className="section-title animate-on-scroll">
+            <h2>Welcome to Student MindCare</h2>
+            <p>Your personalized dashboard for mental wellness support</p>
+          </div>
 
-          
+          <div className="features-grid">
+            {/* Triage Chatbot */}
+            <div className="feature-card animate-on-scroll">
+              <h3>🤖 Triage Chatbot</h3>
+              <p>Begin your mental health check-in through a guided chatbot.</p>
+              <Button className="btn btn-primary" fullWidth onClick={() => navigate('/triage-chatbot')}>
+                Start Triage
+              </Button>
+              <Button className="btn btn-secondary" fullWidth onClick={() => navigate('/triage-summaries')}>
+                View Past Triage Summaries
+              </Button>
+            </div>
 
+            {/* Mood Check-in */}
+            <div className="feature-card animate-on-scroll">
+              <h3>🧠 Mood Check-In</h3>
+              <p>Optional daily mood reflection to track emotional trends.</p>
+              <Button className="btn btn-secondary" fullWidth onClick={() => navigate('/mood-checkin')}>
+                Check In
+              </Button>
+            </div>
 
+            {/* Session Request */}
+            <div className="feature-card animate-on-scroll">
+              <h3>📅 Request a Session</h3>
+              <p>Choose a time to speak with your assigned therapist.</p>
+              <Button className="btn btn-primary" fullWidth onClick={() => navigate('/request-session')}>
+                Request Session
+              </Button>
+              <Button className="btn btn-secondary" fullWidth onClick={() => navigate('/assigned-therapist')}>
+                View Assigned Therapist
+              </Button>
+              <Button className="btn btn-secondary" fullWidth onClick={() => navigate('/confirmed-sessions')}>
+                View Confirmed Sessions
+              </Button>
+            </div>
 
-      </Paper>
+            {/* Resources */}
+            <div className="feature-card animate-on-scroll">
+              <h3>📚 Resources</h3>
+              <p>Access therapist-curated content to help you cope and grow.</p>
+              <Button className="btn btn-secondary" fullWidth onClick={() => navigate('/student-resources')}>
+                View Materials
+              </Button>
+            </div>
 
-      {/* Mood Check-In */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <MoodIcon color="secondary" sx={{ mr: 1 }} />
-          <Typography variant="h6">Mood Check-In</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Optional daily mood reflection to track emotional trends.
-        </Typography>
-        <Button variant="outlined" color="secondary" fullWidth onClick={() => navigate('/mood-checkin')}>
-          Check In
-        </Button>
-      </Paper>
+            {/* Notifications */}
+            <div className="feature-card animate-on-scroll">
+              <h3>🔔 Notifications</h3>
+              <p>Access your notifications for important updates and messages.</p>
+              <Button className="btn btn-primary" fullWidth onClick={() => navigate('/notifications')}>
+                View Notifications
+              </Button>
+            </div>
 
-      {/* Request Session */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <CalendarMonthIcon color="info" sx={{ mr: 1 }} />
-          <Typography variant="h6">Request a Session</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Choose a time to speak to your assigned therapist.
-        </Typography>
-        <Button variant="outlined" color="info" fullWidth onClick={() => navigate('/request-session')}>
-          Request Session
-        </Button>
-            <Button
-              variant="text"
-            fullWidth
-            onClick={() => navigate('/assigned-therapist')}
-            >
-            View Assigned Therapist
-            </Button>
-            <Button
-             variant="text"
-             fullWidth
-              onClick={() => navigate('/confirmed-sessions')} 
-             >
-              View Confirmed Sessions
-            </Button>
+            {/* Pre-Session Chat */}
+            <div className="feature-card animate-on-scroll">
+              <h3>💬 Chat with Therapist</h3>
+              <p>Chat with your therapist before your session to discuss any concerns or topics.</p>
+              <Button className="btn btn-primary" fullWidth onClick={() => navigate('/chat-therapist')}>
+                Message My Therapist
+              </Button>
+            </div>
 
-      </Paper>
-
-      {/* Resources */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <ArticleIcon color="info" sx={{ mr: 1 }} />
-          <Typography variant="h6">Resources</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Access therapist-curated content to help you cope and grow.
-        </Typography>
-        <Button variant="text" fullWidth onClick={() => navigate('/student-resources')}>
-          View Materials
-        </Button>
-      </Paper>
-
-        {/* Notifications */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <ArticleIcon color="info" sx={{ mr: 1 }} />
-          <Typography variant="h6">Notifications</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Access your notifications for important updates and messages.
-        </Typography>
-        <Button
-          variant="outlined"
-          color="info"
-          fullWidth
-          onClick={() => navigate('/notifications')}
-          >
-         View Notifications
-        </Button>
-      </Paper>
-
-              {/* Pre-session chat with therapist */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <ArticleIcon color="info" sx={{ mr: 1 }} />
-          <Typography variant="h6">Chat with therapist</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          Chat with your therapist before your session to discuss any concerns or topics.
-        </Typography>
-          <Button
-           variant="outlined"
-           color="primary"
-          fullWidth
-           onClick={() => navigate('/chat-therapist')}
-           >
-           Message My Therapist
-            </Button>
-
-      </Paper>
-
-      {/* Emergency Support */}
-      <Paper sx={{ p: 3, mb: 3, backgroundColor: '#ffeaea' }}>
-        <Box display="flex" alignItems="center" mb={1}>
-          <NotificationsActiveIcon color="error" sx={{ mr: 1 }} />
-          <Typography variant="h6">Emergency Support</Typography>
-        </Box>
-        <Typography variant="body2" mb={2}>
-          If you are in distress or need urgent help, click below.
-        </Typography>
-        <Button variant="contained" color="error" fullWidth onClick={handleEmergencyClick}>
-          Alert Admin & Therapist
-        </Button>
-      </Paper>
+            {/* Emergency */}
+            <div className="feature-card animate-on-scroll" style={{ backgroundColor: '#ffeaea' }}>
+              <h3>🚨 Emergency Support</h3>
+              <p>If you are in distress or need urgent help, click below.</p>
+              <Button className="btn btn-primary" style={{ backgroundColor: '#e53935' }} fullWidth onClick={handleEmergencyClick}>
+                Alert Admin & Therapist
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Emergency Confirmation Dialog */}
       <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
@@ -205,7 +152,16 @@ const StudentDashboard = () => {
           Emergency alert sent! Help is on the way.
         </Alert>
       </Snackbar>
-    </Container>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="container">
+          <p style={{ color: '#ccc', textAlign: 'center' }}>
+            &copy; 2025 Student MindCare. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </>
   );
 };
 
