@@ -1,9 +1,13 @@
 // src/pages/AdminSessionRequestsPage.jsx
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Paper, Divider, Box, Chip } from '@mui/material';
+import {
+  Container, Typography, Paper, Divider,
+  Box, Chip, Button
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
+import Header from '../pages/Header';
+import '../pages/Landingpage.css';
 
 const AdminSessionRequestsPage = () => {
   const navigate = useNavigate();
@@ -15,37 +19,76 @@ const AdminSessionRequestsPage = () => {
   }, []);
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        variant="outlined"
-        sx={{ mb: 3 }}
-        onClick={() => navigate('/dashboard-admin')}
+    <div className="page-container">
+      <Header />
+
+      {/* Hero Banner */}
+      <div
+        className="animated-section"
+        style={{ background: 'linear-gradient(to right, #7b1fa2, #512da8)' }}
       >
-        Back to Dashboard
-      </Button>
+        <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+          📅 All Session Requests
+        </Typography>
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+          Review all therapy session submissions from students
+        </Typography>
+      </div>
 
-      <Typography variant="h4" gutterBottom>
-        All Session Requests
-      </Typography>
+      <Container maxWidth="md" sx={{ py: 5 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          variant="outlined"
+          sx={{ mb: 3 }}
+          onClick={() => navigate('/dashboard-admin')}
+        >
+          Back to Dashboard
+        </Button>
 
-      {requests.length === 0 ? (
-        <Typography>No session requests submitted.</Typography>
-      ) : (
-        requests.map((req, index) => (
-          <Paper key={index} sx={{ p: 2, mb: 2 }}>
-            <Box display="flex" justifyContent="space-between">
-              <Typography variant="h6">{req.topic}</Typography>
-              <Chip label={req.status || 'pending'} color="info" />
-            </Box>
-            <Typography variant="body2" color="text.secondary">Student: {req.studentId}</Typography>
-            <Typography variant="body2" color="text.secondary">Therapist: {req.therapistEmail}</Typography>
-            <Typography variant="body2">Preferred: {new Date(req.preferredTime).toLocaleString()}</Typography>
-            <Divider sx={{ mt: 1 }} />
-          </Paper>
-        ))
-      )}
-    </Container>
+        {requests.length === 0 ? (
+          <Typography>No session requests submitted.</Typography>
+        ) : (
+          requests.map((req, index) => (
+            <Paper
+              key={index}
+              elevation={3}
+              sx={{
+                p: 3,
+                mb: 3,
+                borderRadius: 3,
+                background: 'linear-gradient(to right, #ede7f6, #d1c4e9)',
+                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
+                animation: 'fadeIn 0.5s ease-in-out'
+              }}
+            >
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#4527a0' }}>
+                  {req.topic}
+                </Typography>
+                <Chip
+                  label={req.status?.toUpperCase() || 'PENDING'}
+                  color={req.status === 'approved' ? 'success' : 'info'}
+                  variant="outlined"
+                />
+              </Box>
+
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                👤 Student: {req.studentId}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                🧠 Therapist: {req.therapistEmail}
+              </Typography>
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                ⏰ Preferred Time:{' '}
+                <strong>{new Date(req.preferredTime).toLocaleString()}</strong>
+              </Typography>
+
+              <Divider sx={{ mt: 2 }} />
+            </Paper>
+          ))
+        )}
+      </Container>
+    </div>
   );
 };
 

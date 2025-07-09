@@ -6,6 +6,8 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import ResourceCard from '../components/admin/ResourceCard';
 import AddEditResourceModal from '../components/admin/AddEditResourceModal';
+import Header from '../pages/Header';
+import '../pages/Landingpage.css';
 
 const AdminResourcesPage = () => {
   const [resources, setResources] = useState([]);
@@ -49,25 +51,71 @@ const AdminResourcesPage = () => {
   };
 
   return (
-    <Container sx={{ mt: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">Manage Curated Resources</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleAdd}>
-          Add Resource
-        </Button>
-      </Box>
+    <div className="page-container">
+      <Header />
 
-      <Grid container spacing={3}>
-        {resources.map((resource) => (
-          <Grid item xs={12} sm={6} md={4} key={resource.id}>
-            <ResourceCard
-              resource={resource}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+      {/* Hero Banner */}
+      <div
+        className="animated-section"
+        style={{ background: 'linear-gradient(to right, #7b1fa2, #512da8)' }}
+      >
+        <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+          📚 Manage Curated Resources
+        </Typography>
+        <Typography variant="body1" sx={{ opacity: 0.9 }}>
+          Upload and manage resources available to students
+        </Typography>
+      </div>
+
+      <Container sx={{ py: 5 }}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          mb={3}
+          sx={{
+            flexWrap: 'wrap',
+            gap: 2
+          }}
+        >
+          <Typography variant="h5" sx={{ color: '#4527a0', fontWeight: 'bold' }}>
+            Uploaded Resources
+          </Typography>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleAdd}
+            sx={{
+              background: 'linear-gradient(to right, #7b1fa2, #512da8)',
+              color: 'white',
+              fontWeight: 'bold',
+              '&:hover': {
+                background: 'linear-gradient(to right, #5e35b1, #311b92)'
+              }
+            }}
+          >
+            Add Resource
+          </Button>
+        </Box>
+
+        {resources.length === 0 ? (
+          <Typography color="text.secondary">
+            No resources uploaded yet.
+          </Typography>
+        ) : (
+          <Grid container spacing={3}>
+            {resources.map((resource) => (
+              <Grid item xs={12} sm={6} md={4} key={resource.id}>
+                <ResourceCard
+                  resource={resource}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
+        )}
+      </Container>
 
       <AddEditResourceModal
         open={openModal}
@@ -75,9 +123,8 @@ const AdminResourcesPage = () => {
         onSave={handleSave}
         editData={editResource}
       />
-    </Container>
+    </div>
   );
 };
 
 export default AdminResourcesPage;
-

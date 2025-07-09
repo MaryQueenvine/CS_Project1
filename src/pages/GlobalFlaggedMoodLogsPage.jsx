@@ -23,7 +23,6 @@ const GlobalFlaggedMoodLogsPage = () => {
       acc[studentKey].push(log);
       return acc;
     }, {});
-
     setGroupedLogs(grouped);
   }, []);
 
@@ -45,23 +44,18 @@ const GlobalFlaggedMoodLogsPage = () => {
 
   const getDashboardPath = () => {
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    if (!currentUser) return '/login';
-    return currentUser.role === 'Admin'
-      ? '/dashboard-admin'
-      : '/dashboard-therapist';
+    return currentUser?.role === 'Admin' ? '/dashboard-admin' : '/dashboard-therapist';
   };
-
-  const hasLogs = Object.keys(groupedLogs).length > 0;
 
   return (
     <div className="page-container">
       <Header />
 
-      {/* Top Animated Banner */}
       <div
         className="animated-section"
         style={{
-          background: 'linear-gradient(to right, #ef5350, #d32f2f)'
+          background: 'linear-gradient(to right, #7b1fa2, #512da8)',
+          color: '#fff'
         }}
       >
         <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
@@ -79,25 +73,20 @@ const GlobalFlaggedMoodLogsPage = () => {
           onClick={() => navigate(getDashboardPath())}
           sx={{
             mb: 3,
-            borderColor: '#e53935',
-            color: '#e53935',
+            borderColor: '#7b1fa2',
+            color: '#7b1fa2',
             fontWeight: 'bold',
             '&:hover': {
-              backgroundColor: '#fdecea',
-              borderColor: '#c62828'
+              backgroundColor: '#f3e5f5',
+              borderColor: '#512da8'
             }
           }}
         >
           Back to Dashboard
         </Button>
 
-        {!hasLogs ? (
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            align="center"
-            sx={{ mt: 4 }}
-          >
+        {Object.keys(groupedLogs).length === 0 ? (
+          <Typography align="center" color="text.secondary">
             No flagged mood logs found.
           </Typography>
         ) : (
@@ -107,51 +96,53 @@ const GlobalFlaggedMoodLogsPage = () => {
                 variant="h6"
                 sx={{
                   mb: 2,
-                  color: '#c62828',
-                  borderLeft: '5px solid #c62828',
+                  color: '#512da8',
+                  borderLeft: '5px solid #7b1fa2',
                   pl: 2,
-                  fontWeight: 'bold',
-                  fontSize: '1.2rem'
+                  fontWeight: 'bold'
                 }}
               >
                 Student: {studentId}
               </Typography>
 
               {logs.map((log, idx) => (
-                <Paper key={idx} elevation={4} className="alert-card">
-                  <div className="log-header">
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      sx={{ color: '#333' }}
-                    >
+                <Paper
+                  key={idx}
+                  elevation={4}
+                  sx={{
+                    p: 3,
+                    mb: 3,
+                    background: 'linear-gradient(to right, #ede7f6, #f3e5f5)',
+                    borderLeft: '6px solid #7b1fa2',
+                    borderRadius: 2
+                  }}
+                >
+                  <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
                       Mood: {log.mood}
                     </Typography>
-                    <div className="chip-group">
+                    <Box>
                       <Chip
                         label={new Date(log.timestamp).toLocaleString()}
                         size="small"
                         color="info"
+                        sx={{ mr: 1 }}
                       />
                       <Chip
                         label="Flagged"
                         size="small"
                         sx={{
-                          backgroundColor: '#d32f2f',
-                          color: 'white',
+                          backgroundColor: '#7b1fa2',
+                          color: '#fff',
                           fontWeight: 'bold'
                         }}
                       />
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
 
                   <Divider sx={{ my: 2 }} />
 
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
-                  >
+                  <Typography color="text.secondary" sx={{ mb: 2 }}>
                     {log.comment || 'No comment provided.'}
                   </Typography>
 
@@ -165,13 +156,6 @@ const GlobalFlaggedMoodLogsPage = () => {
                     onChange={(e) =>
                       handleNoteChange(studentId, log.timestamp, e.target.value)
                     }
-                    sx={{
-                      backgroundColor: 'white',
-                      borderRadius: 1,
-                      '& .MuiOutlinedInput-root': {
-                        borderColor: '#ccc'
-                      }
-                    }}
                   />
                 </Paper>
               ))}
